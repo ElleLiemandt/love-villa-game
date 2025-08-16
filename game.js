@@ -14,7 +14,8 @@ class LoveIslandGame {
             mathAnswer: null,
             mathCorrect: false,
             isDumped: false,
-            vibeHints: []
+            vibeHints: [],
+            screenState: 'LANDING'  // Screen state management
         };
         
         // Constants
@@ -37,6 +38,9 @@ class LoveIslandGame {
         this.currentStorySteps = [];
         this.currentStoryStepIndex = 0;
         
+        // Transition flag
+        this.isTransitioning = false;
+        
         // Initialize the game
         this.init();
         
@@ -57,14 +61,464 @@ class LoveIslandGame {
         // Initialize avatar system
         this.initializeAvatars();
         
-        // Set up keyboard navigation for single-line mode
-        this.setupKeyboardNavigation();
-        
         // Set up meter HUD
         this.createMeterHUD();
         this.updateMeterHUD();
         
+        // Initialize state machine
+        this.initializeStateMachine();
+        
         console.log('SINGLE-LINE STORY MODE ACTIVE');
+    }
+    
+    initializeStateMachine() {
+        // Skip landing, go straight to PLAY state for Day 1
+        this.gameState.screenState = 'PLAY';
+        console.log('Initializing state machine, screenState:', this.gameState.screenState);
+        console.log('Skipping landing screen - going straight to Day 1');
+        this.renderCurrentScreen();
+        
+        // Load and preload assets
+        this.preloadAssets();
+    }
+    
+    preloadAssets() {
+        // Preload beach background
+        const beachImg = new Image();
+        beachImg.src = '/public/assets/avatars/Newbackground.png';
+        
+        // Villa background is set in CSS
+        this.villaBackgroundPath = '/public/assets/backgrounds/villa_day.png';
+        console.log('Assets preloaded');
+    }
+    
+    renderCurrentScreen() {
+        const { screenState } = this.gameState;
+        console.log('renderCurrentScreen called with state:', screenState);
+        
+        switch (screenState) {
+            case 'LANDING':
+                this.renderLandingView();
+                break;
+            case 'INTRO':
+                this.renderIntroView();
+                break;
+            case 'PLAY':
+                this.renderPlayView();
+                break;
+            default:
+                console.error('Unknown screen state:', screenState);
+        }
+    }
+    
+    // LANDING VIEW
+    renderLandingView() {
+        // Set body class for styling
+        document.body.className = 'landing-active';
+        
+        // Hide all game screens
+        this.hideAllScreens();
+        
+        // Show intro screen with landing styling
+        const introScreen = document.getElementById('introScreen');
+        if (introScreen) {
+            introScreen.style.display = 'flex';
+            // Background already set in CSS, no need to override
+        }
+        
+        // Show villa enter button
+        const villaBtn = document.getElementById('villaEnterBtn');
+        if (villaBtn) {
+            villaBtn.style.display = 'block';
+            villaBtn.style.opacity = '1';
+        }
+        
+        console.log('LANDING READY (newbackground)');
+        console.log('Starting 5-second timer...');
+        
+        // Clear any existing timers
+        if (this.landingTimer) {
+            clearTimeout(this.landingTimer);
+        }
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+        }
+        
+        // Start countdown display
+        let countdown = 5;
+        const countdownText = document.getElementById('countdownText');
+        if (countdownText) {
+            countdownText.textContent = `Starting in ${countdown}...`;
+            countdownText.style.display = 'block';
+            
+            // Update countdown every second
+            this.countdownInterval = setInterval(() => {
+                countdown--;
+                if (countdown > 0) {
+                    countdownText.textContent = `Starting in ${countdown}...`;
+                } else {
+                    countdownText.textContent = 'Welcome to Love Island...';
+                }
+            }, 1000);
+        }
+        
+        // Auto-transition after 5 seconds
+        this.landingTimer = setTimeout(() => {
+            console.log('5 seconds elapsed - auto-transitioning to intro');
+            if (this.countdownInterval) {
+                clearInterval(this.countdownInterval);
+                this.countdownInterval = null;
+            }
+            this.transitionToIntro();
+        }, 5000);
+    }
+    
+    // Button click handler
+    enterVilla() {
+        // Prevent double-clicking
+        if (this.isTransitioning) return;
+        
+        console.log('LANDING BUTTON CLICKED');
+        if (!this.gameState) {
+            console.error('Game state not initialized!');
+            return;
+        }
+        this.transitionToIntro();
+    }
+    
+    setupLandingKeyListener() {
+        // Remove existing listeners
+        this.removeAllKeyListeners();
+        
+        this.landingKeyListener = (event) => {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                this.transitionToIntro();
+            }
+        };
+        document.addEventListener('keydown', this.landingKeyListener);
+    }
+    
+    transitionToIntro() {
+        // Set transition flag
+        this.isTransitioning = true;
+        
+        // Clear landing timer and countdown if they exist
+        if (this.landingTimer) {
+            clearTimeout(this.landingTimer);
+            this.landingTimer = null;
+        }
+        if (this.countdownInterval) {
+            clearInterval(this.countdownInterval);
+            this.countdownInterval = null;
+        }
+        
+        console.log('LANDING → INTRO');
+        console.log('Current screenState before transition:', this.gameState.screenState);
+        
+        const villaBtn = document.getElementById('villaEnterBtn');
+        const countdownText = document.getElementById('countdownText');
+        const fadeOverlay = document.getElementById('introFadeOverlay');
+        
+        // Fade out button and countdown
+        if (villaBtn) {
+            villaBtn.style.opacity = '0';
+            villaBtn.style.pointerEvents = 'none';
+            console.log('Button faded out');
+        }
+        if (countdownText) {
+            countdownText.style.opacity = '0';
+        }
+        
+        // Activate fade overlay
+        if (fadeOverlay) {
+            fadeOverlay.classList.add('active');
+            console.log('Fade overlay activated');
+        }
+        
+        // Remove any key listeners
+        this.removeAllKeyListeners();
+        
+        // After fade, switch to intro
+        setTimeout(() => {
+            console.log('Switching to INTRO state...');
+            this.gameState.screenState = 'INTRO';
+            console.log('New screenState:', this.gameState.screenState);
+            this.renderCurrentScreen();
+            this.isTransitioning = false;  // Clear transition flag
+        }, 300);
+    }
+    
+    // INTRO VIEW
+    renderIntroView() {
+        console.log('renderIntroView called');
+        
+        // Set body class for styling
+        document.body.className = 'intro-active';
+        
+        // Hide landing screen completely
+        const introScreen = document.getElementById('introScreen');
+        if (introScreen) {
+            introScreen.style.display = 'none';
+            console.log('Landing screen hidden');
+        }
+        
+        // Clear fade overlay
+        const fadeOverlay = document.getElementById('introFadeOverlay');
+        if (fadeOverlay) {
+            fadeOverlay.classList.remove('active');
+        }
+        
+        // Show reactions area and start Ariana's intro
+        this.hideAllScreens();
+        this.showElement('reactions');
+        
+        // Set up Ariana's intro script
+        this.setupIntroScript();
+        
+        console.log('INTRO SCREEN READY');
+    }
+    
+    setupIntroScript() {
+        // Ariana's intro dialogue
+        this.introSteps = [
+            { speaker: 'ariana', text: "Welcome to the villa, babe! 🌴 I'm Ariana, your host — and trust me, this summer is going to get messy." },
+            { speaker: 'ariana', text: "You'll be living with a colorful group of islanders, each with their own drama, secrets, and charm." }
+        ];
+        
+        this.currentIntroIndex = 0;
+        this.isInIntro = true;
+        this.setupIntroKeyListener();
+        this.renderCurrentIntroStep();
+    }
+    
+    setupIntroKeyListener() {
+        this.removeAllKeyListeners();
+        
+        this.introKeyListener = (event) => {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                this.advanceIntroStep();
+            }
+        };
+        document.addEventListener('keydown', this.introKeyListener);
+    }
+    
+    renderCurrentIntroStep() {
+        const step = this.introSteps[this.currentIntroIndex];
+        if (!step) return;
+        
+        const character = this.getCharacterInfo(step.speaker);
+        
+        // Render single line view
+        const reactionsDiv = document.getElementById('reactions');
+        if (reactionsDiv) {
+            reactionsDiv.innerHTML = `
+                <div class="single-line-container">
+                    <div class="single-line-view" data-speaker="${step.speaker}">
+                        <div class="speaker-avatar">
+                            <div class="avatar-circle" style="border-color: ${character.accentColor};">
+                                <img src="${character.avatarSrc}" 
+                                     alt="${character.name}" 
+                                     class="avatar-image"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-fallback" 
+                                     style="background: ${character.accentColor}; display: none;">
+                                    ${character.name.charAt(0)}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="speech-bubble">
+                            <div class="bubble-content">${step.text}</div>
+                            <div class="bubble-tail"></div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+    }
+    
+    advanceIntroStep() {
+        this.currentIntroIndex++;
+        
+        if (this.currentIntroIndex >= this.introSteps.length) {
+            // For now, just log that we've reached the end of the intro lines
+            console.log('INTRO lines complete (staying in INTRO)');
+            // Don't transition to PLAY yet - just stay in INTRO
+        } else {
+            this.renderCurrentIntroStep();
+        }
+    }
+    
+    preloadVillaBackground() {
+        // Try to preload villa-bg-day.png, fallback to villa_day.png
+        const villaImg = new Image();
+        villaImg.onload = () => {
+            console.log('Villa background preloaded: villa-bg-day.png');
+            this.villaBackgroundPath = '/public/assets/villa-bg-day.png';
+        };
+        villaImg.onerror = () => {
+            console.log('villa-bg-day.png not found, using fallback: villa_day.png');
+            this.villaBackgroundPath = '/public/assets/backgrounds/villa_day.png';
+            
+            // Preload fallback
+            const fallbackImg = new Image();
+            fallbackImg.src = this.villaBackgroundPath;
+        };
+        villaImg.src = '/public/assets/villa-bg-day.png';
+    }
+    
+    transitionToIntro() {
+        console.log('LANDING → INTRO');
+        
+        const fadeOverlay = document.getElementById('introFadeOverlay');
+        const spaceHint = document.getElementById('spaceHint');
+        
+        // Fade out the hint first
+        if (spaceHint) {
+            spaceHint.style.opacity = '0';
+        }
+        
+        // Activate fade overlay
+        if (fadeOverlay) {
+            fadeOverlay.classList.add('active');
+        }
+        
+        // Remove landing key listener
+        if (this.landingKeyListener) {
+            document.removeEventListener('keydown', this.landingKeyListener);
+            this.landingKeyListener = null;
+        }
+        
+        // Set up keyboard navigation for gameplay (but not active yet)
+        this.setupKeyboardNavigation();
+        
+        // After fade completes, transition to intro sequence
+        setTimeout(() => {
+            // Remove the beach background (fade overlay)
+            if (fadeOverlay) {
+                fadeOverlay.classList.remove('active');
+            }
+            
+            // Hide space hint
+            if (spaceHint) {
+                spaceHint.style.display = 'none';
+            }
+            
+            console.log('INTRO START');
+            
+            // Start the Ariana + cast intro sequence
+            this.showVillaIntro();
+        }, 300);
+    }
+    
+    // PLAY VIEW  
+    renderPlayView() {
+        // Set body class for villa background
+        document.body.className = 'play-screen-active';
+        
+        // Add fallback class if using old villa background
+        if (this.villaBackgroundPath && this.villaBackgroundPath.includes('villa_day.png')) {
+            document.body.classList.add('fallback-bg');
+        }
+        
+        // Hide intro screen (in case it's still visible)
+        const introScreen = document.getElementById('introScreen');
+        if (introScreen) {
+            introScreen.style.display = 'none';
+        }
+        
+        // Show game content
+        this.hideAllScreens();
+        this.showElement('reactions');
+        
+        // Make sure meters are visible
+        this.updateMeterHUD();
+        
+        // Set up game keyboard navigation
+        this.setupKeyboardNavigation();
+        
+        console.log('GAME START - Day 1 (no landing screen)');
+        console.log('Villa background active');
+        
+        // Start Day 1 story
+        this.startStory({ day: 1, stepId: this.getInitialStepIdForDay(1) });
+    }
+    
+    // UTILITY FUNCTIONS
+    removeAllKeyListeners() {
+        if (this.landingKeyListener) {
+            document.removeEventListener('keydown', this.landingKeyListener);
+            this.landingKeyListener = null;
+        }
+        if (this.introKeyListener) {
+            document.removeEventListener('keydown', this.introKeyListener);
+            this.introKeyListener = null;
+        }
+        if (this.keyboardListener) {
+            document.removeEventListener('keydown', this.keyboardListener);
+            this.keyboardListener = null;
+        }
+        if (this.mathKeyListener) {
+            document.removeEventListener('keydown', this.mathKeyListener);
+            this.mathKeyListener = null;
+        }
+        if (this.introSequenceKeyListener) {
+            document.removeEventListener('keydown', this.introSequenceKeyListener);
+            this.introSequenceKeyListener = null;
+        }
+    }
+    
+    activateHeartCta() {
+        console.log('HEART CTA activated → /play');
+        
+        const heartButton = document.getElementById('heartCta');
+        const blurOverlay = document.getElementById('landingBlurOverlay');
+        
+        // Prevent multiple clicks
+        if (heartButton.classList.contains('animating')) {
+            return;
+        }
+        
+        // Add animating class for zoom effect
+        heartButton.classList.add('animating');
+        
+        // Activate blur overlay
+        blurOverlay.classList.add('active');
+        
+        // After animation completes, navigate to play
+        setTimeout(() => {
+            // Remove landing class from body
+            document.body.classList.remove('landing-active');
+            
+            // Start the game
+            this.startGame();
+        }, 600);
+    }
+    
+    handleHeartKeydown(event) {
+        // Handle Enter and Space key presses
+        if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            this.activateHeartCta();
+        }
+    }
+    
+    toggleLandingMode() {
+        const landingScreen = document.querySelector('.landing-screen');
+        const legacyScreen = document.getElementById('legacyStartScreen');
+        
+        if (landingScreen.style.display === 'none') {
+            landingScreen.style.display = 'flex';
+            legacyScreen.style.display = 'none';
+            document.body.classList.add('landing-active');
+            console.log('Switched to Landing v2 mode');
+        } else {
+            landingScreen.style.display = 'none';
+            legacyScreen.style.display = 'block';
+            document.body.classList.remove('landing-active');
+            console.log('Switched to Legacy start screen');
+        }
     }
     
     // VILLA INTRODUCTION SEQUENCE
@@ -609,12 +1063,18 @@ class LoveIslandGame {
         // Check if intro sequence is complete
         if (this.isInIntro && this.currentDialogueIndex >= this.currentDialogueSet.length) {
             console.log('INTRO SEQUENCE END');
-            console.log('INTRO → STORY HANDOFF');
+            
+            // Remove intro sequence key listener
+            if (this.introSequenceKeyListener) {
+                document.removeEventListener('keydown', this.introSequenceKeyListener);
+                this.introSequenceKeyListener = null;
+            }
+            
             this.isInIntro = false;
             
-            // Hide reactions and start the story engine
+            // Hide reactions and transition to play
             document.getElementById('reactions').style.display = 'none';
-            this.startStory({ day: 1, stepId: this.getInitialStepIdForDay(1) });
+            this.transitionToPlay();
             return;
         }
         
@@ -2387,6 +2847,43 @@ Good luck in the villa! 💕`);
         }, 100);
     }
 
+    // Beach Intro Functions (moved to line ~73)
+    
+    setupIntroSequenceKeyListener() {
+        this.introSequenceKeyListener = (event) => {
+            if (event.key === ' ' || event.key === 'Enter') {
+                event.preventDefault();
+                this.advanceToNextStep();
+            }
+        };
+        document.addEventListener('keydown', this.introSequenceKeyListener);
+    }
+    
+    toggleIntroMode() {
+        const introScreen = document.getElementById('introScreen');
+        const legacyScreen = document.getElementById('legacyStartScreen');
+        
+        if (introScreen && legacyScreen) {
+            if (introScreen.style.display === 'none') {
+                introScreen.style.display = 'flex';
+                legacyScreen.style.display = 'none';
+                document.body.classList.add('intro-active');
+                document.body.classList.remove('play-screen-active', 'fallback-bg');
+                this.setupLandingKeyListener();
+                console.log('Switched to Beach Intro mode');
+            } else {
+                introScreen.style.display = 'none';
+                legacyScreen.style.display = 'block';
+                document.body.classList.remove('intro-active');
+                if (this.landingKeyListener) {
+                    document.removeEventListener('keydown', this.landingKeyListener);
+                    this.landingKeyListener = null;
+                }
+                console.log('Switched to Legacy start screen');
+            }
+        }
+    }
+
     // This function was moved up to line 147 to handle both intro and normal gameplay
     
     selectChoice(nextStepId) {
@@ -2517,4 +3014,4 @@ Want to try a different path? Every choice matters!`;
 }
 
 // Initialize the game when the page loads
-const game = new LoveIslandGame();
+window.game = new LoveIslandGame();

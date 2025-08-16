@@ -577,6 +577,160 @@
             width: 100%;
         }
         
+        /* Landing Screen - Full Viewport */
+        .intro-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-image: url('/public/assets/avatars/Newbackground.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            overflow: hidden;
+            z-index: 9999;
+            pointer-events: auto;
+        }
+        
+        /* Villa Enter Button - Centered (Non-interactive) */
+        .villa-enter-btn {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: linear-gradient(135deg, #ff6b9d, #ff4757);
+            color: white;
+            padding: 20px 50px;
+            border: none;
+            border-radius: 50px;
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            animation: villaButtonPulse 2s ease-in-out infinite;
+            transition: all 0.3s ease;
+            cursor: default;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+        
+
+        
+        .heart-cta:hover {
+            transform: translate(-50%, -50%) scale(1.1);
+            box-shadow: 0 12px 35px rgba(255, 107, 157, 0.6);
+            animation: heartGlow 1.5s ease-in-out infinite;
+        }
+        
+        .heart-cta:focus {
+            outline: 3px solid #ff6b9d;
+            outline-offset: 4px;
+        }
+        
+        .heart-cta:active,
+        .heart-cta.animating {
+            transform: translate(-50%, -50%) scale(1.6);
+            transition: transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        /* Heart animations */
+        @keyframes villaButtonPulse {
+            0%, 100% { 
+                box-shadow: 0 10px 30px rgba(255, 107, 157, 0.4);
+            }
+            50% { 
+                box-shadow: 0 15px 40px rgba(255, 107, 157, 0.6);
+            }
+        }
+        
+        /* Intro fade overlay for transition */
+        .intro-fade-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        
+        .intro-fade-overlay.active {
+            opacity: 1;
+            background: rgba(0, 0, 0, 1);
+        }
+        
+        /* Mobile responsive villa button */
+        @media (max-width: 768px) {
+            .villa-enter-btn {
+                font-size: 18px;
+                padding: 16px 40px;
+                max-width: calc(100vw - 40px);
+                letter-spacing: 1px;
+            }
+        }
+        
+        /* Landing state - hide HUD and game container */
+        .landing-active .meter-hud {
+            display: none !important;
+        }
+        
+        .landing-active .villa-header {
+            display: none !important;
+        }
+        
+        .landing-active .game-container {
+            display: none !important;
+        }
+        
+        /* Intro state - hide HUD but show game container for dialogue */
+        .intro-active {
+            background: #1a1a2e;
+            min-height: 100vh;
+            width: 100vw;
+        }
+        
+        .intro-active .meter-hud {
+            display: none !important;
+        }
+        
+        .intro-active .villa-header {
+            display: none !important;
+        }
+        
+        .intro-active .game-container {
+            display: block !important;
+            background: transparent !important;
+            box-shadow: none !important;
+        }
+        
+        /* Play state - villa background and full UI */
+        .play-screen-active {
+            background-image: url('/public/assets/backgrounds/villa_day.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            background-attachment: fixed;
+            min-height: 100vh;
+        }
+        
+        /* Fallback to existing villa background if villa-bg-day.png doesn't exist */
+        .play-screen-active.fallback-bg {
+            background-image: url('/public/assets/backgrounds/villa_day.png');
+        }
+        
+        /* Ensure game container is visible in play mode */
+        .play-screen-active .game-container {
+            display: block !important;
+        }
+        
+        /* Legacy start screen styles */
         .start-screen {
             text-align: center;
             padding: 2rem;
@@ -1020,9 +1174,10 @@
             <div class="villa-subtitle">A choose-your-own-adventure demo • Seasons 6 & 7 Cast</div>
         </div>
         
-        <!-- Start Screen -->
+        <!-- Beach Intro Screen - Full Viewport -->
         <div id="startScreen" class="game-screen active">
-            <div class="start-screen">
+            <!-- Legacy start screen for dev access -->
+            <div class="start-screen" id="legacyStartScreen" style="display: none;">
                 <div class="game-info">
                     <h3>🌹 Welcome to the Villa! 🌹</h3>
                     <p><strong>5-Day Mini-Season</strong> • Hidden Drama & Loyalty meters</p>
@@ -1034,6 +1189,18 @@
                 <button class="start-btn" onclick="game.startGame()">🏝️ Enter the Villa</button>
                 <button class="start-btn" onclick="game.showRules()">📖 Game Rules</button>
                 <button class="start-btn" onclick="game.showAvatarValidation()" style="background: #9b59b6;">🔍 Dev: Avatar Validation</button>
+                <button class="start-btn" onclick="game.toggleIntroMode()" style="background: #34495e;">🔄 Toggle Beach Intro</button>
+            </div>
+        </div>
+        
+        <!-- Full-Viewport Beach Intro (outside game container) - DISABLED -->
+        <div class="intro-screen" id="introScreen" style="display: none;">
+            <div class="intro-fade-overlay" id="introFadeOverlay"></div>
+            <div class="villa-enter-btn" id="villaEnterBtn">
+                Welcome to the Villa
+            </div>
+            <div class="countdown-text" id="countdownText" style="position: absolute; top: 60%; left: 50%; transform: translate(-50%, -50%); color: white; font-size: 18px; text-shadow: 0 2px 4px rgba(0,0,0,0.5); font-weight: 500;">
+                Starting in 5...
             </div>
         </div>
         
