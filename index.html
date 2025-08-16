@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love Island USA: Villa Parody</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8e8e 50%, #ffa8a8 100%);
+            min-height: 100vh;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .game-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 1rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .villa-header {
+            text-align: center;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 2rem;
+            border-radius: 20px 20px 0 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+        
+        .villa-title {
+            color: #e91e63;
+            font-size: 2.5rem;
+            margin: 0 0 0.5rem 0;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+            font-weight: bold;
+        }
+        
+        .villa-subtitle {
+            color: #666;
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        .game-screen {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            flex: 1;
+            padding: 2rem;
+            display: none;
+        }
+        
+        .game-screen.active {
+            display: block;
+        }
+        
+        .day-header {
+            background: linear-gradient(45deg, #e91e63, #ff4081);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 2rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+        }
+        
+        .narrator-text {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 15px;
+            border-left: 4px solid #e91e63;
+            margin-bottom: 2rem;
+            font-style: italic;
+        }
+        
+        .narrator-name {
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 0.5rem;
+        }
+        
+        .scene-content {
+            margin-bottom: 2rem;
+        }
+        
+        .scene-title {
+            color: #e91e63;
+            font-size: 1.4rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+        
+        .scene-text {
+            margin-bottom: 1.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .choices {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .choice-btn {
+            background: linear-gradient(45deg, #e91e63, #ff4081);
+            color: white;
+            border: none;
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            text-align: left;
+            position: relative;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .choice-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(233, 30, 99, 0.4);
+        }
+        
+        .choice-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .math-indicator {
+            background: #4CAF50;
+            color: white;
+            padding: 0.3rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            margin-left: auto;
+            margin-right: 0.5rem;
+        }
+        
+        /* Episode-Style Avatar System */
+        .reactions {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 1.5rem;
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+            backdrop-filter: blur(10px);
+        }
+        
+        .character-reaction {
+            margin-bottom: 1.5rem;
+            opacity: 0;
+            transform: translateX(-20px) scale(0.95);
+        }
+        
+        .character-reaction:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* OLD DIALOGUE BUBBLE SYSTEM - DISABLED */
+        .dialogue-bubble-container {
+            display: none !important;
+        }
+        
+        /* OLD AVATAR CONTAINER - DISABLED */
+        .avatar-container {
+            display: none !important;
+        }
+        
+        /* OLD AVATAR RING - DISABLED */
+        .avatar-ring {
+            display: none !important;
+        }
+        
+        .avatar-image {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            background: #e91e63;
+            color: white;
+        }
+        
+        .season-badge {
+            position: absolute;
+            bottom: -5px;
+            right: -5px;
+            background: #e91e63;
+            color: white;
+            font-size: 0.65rem;
+            font-weight: bold;
+            padding: 3px 6px;
+            border-radius: 12px;
+            border: 2px solid white;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            min-width: 24px;
+            text-align: center;
+        }
+        
+        /* OLD MESSAGE CARD STYLES - DISABLED FOR SINGLE SPEAKER */
+        .message-card {
+            display: none !important;
+        }
+        
+        .message-card::before {
+            display: none !important;
+        }
+        
+        .narrator-card {
+            background: linear-gradient(135deg, #e91e63, #ff4081);
+            color: white;
+        }
+        
+        .narrator-card::before {
+            border-right-color: #e91e63;
+        }
+        
+        .narrator .character-name,
+        .narrator .character-voice {
+            color: white !important;
+        }
+        
+        .character-info {
+            margin-bottom: 0.8rem;
+        }
+        
+        .character-name {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 0.2rem;
+            color: #e91e63;
+        }
+        
+        .character-voice {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            font-style: italic;
+            color: #666;
+        }
+        
+        .quote {
+            font-size: 1rem;
+            line-height: 1.5;
+            color: #333;
+        }
+        
+        .narrator .quote {
+            color: white;
+        }
+        
+        /* Math Challenge Modal */
+        .math-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            animation: fadeIn 0.3s ease-out;
+        }
+        
+        .math-modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 24px;
+            max-width: 500px;
+            width: 90%;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            animation: scaleIn 0.3s ease-out;
+        }
+        
+        .math-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        
+        .math-challenge {
+            text-align: center;
+        }
+        
+        .math-problem {
+            font-size: 32px;
+            font-weight: bold;
+            color: #e91e63;
+            margin-bottom: 24px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .timer-section {
+            margin-bottom: 24px;
+        }
+        
+        .timer-display {
+            font-size: 18px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .timer-bar {
+            width: 100%;
+            height: 8px;
+            background: #f0f0f0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        
+        .timer-progress {
+            height: 100%;
+            background: linear-gradient(90deg, #4CAF50, #FFC107, #FF5722);
+            border-radius: 4px;
+            transition: width 1s linear;
+            width: 0%;
+        }
+        
+        .answer-section {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .math-input {
+            padding: 12px 16px;
+            border: 2px solid #e91e63;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            width: 120px;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        
+        .math-input:focus {
+            border-color: #c2185b;
+            box-shadow: 0 0 0 3px rgba(233, 30, 99, 0.2);
+        }
+        
+        .math-submit {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .math-submit:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
+        }
+        
+        .math-test-btn {
+            background: linear-gradient(135deg, #00d2ff, #3a7bd5);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-width: 200px;
+            box-shadow: 0 4px 15px rgba(58, 123, 213, 0.3);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .math-test-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(58, 123, 213, 0.4);
+            background: linear-gradient(135deg, #00a8cc, #2d5aa0);
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes scaleIn {
+            from { transform: scale(0.9) translateY(20px); opacity: 0; }
+            to { transform: scale(1) translateY(0); opacity: 1; }
+        }
+        
+        /* Mobile math modal */
+        @media (max-width: 768px) {
+            .math-modal-content {
+                padding: 20px 16px;
+                margin: 20px;
+            }
+            
+            .math-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 12px;
+            }
+            
+            .math-problem {
+                font-size: 28px;
+                margin-bottom: 20px;
+            }
+            
+            .answer-section {
+                flex-direction: column;
+                gap: 16px;
+            }
+            
+            .math-input {
+                width: 100%;
+                max-width: 200px;
+            }
+            
+            .math-submit {
+                width: 100%;
+                max-width: 200px;
+                padding: 14px 24px;
+            }
+            
+            .math-test-btn {
+                padding: 5px 8px;
+                font-size: 10px;
+            }
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        /* Scene Background System */
+        .game-screen {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            transition: background-image 0.8s ease-in-out;
+        }
+        
+        .game-screen::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+        }
+        
+        /* Legacy character card styles (for fallback) */
+        /* OLD CHARACTER CARD STYLES - DISABLED FOR SINGLE SPEAKER */
+        .character-card-disabled {
+            display: none !important;
+        }
+        
+        .character-avatar {
+            margin-right: 0.8rem;
+            position: relative;
+        }
+        
+        .avatar-emoji {
+            font-size: 2rem;
+            line-height: 1;
+            display: block;
+        }
+        
+        .speech-bubble {
+            flex: 1;
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 12px;
+            border-left: 4px solid #e91e63;
+            position: relative;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        .speech-bubble::before {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: 1rem;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 8px solid #f8f9fa;
+        }
+        
+        .math-challenge {
+            background: #e3f2fd;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            margin: 2rem 0;
+            border-left: 4px solid #2196F3;
+        }
+        
+        .math-problem {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1976D2;
+        }
+        
+        .math-input {
+            padding: 0.8rem;
+            font-size: 1.2rem;
+            border: 2px solid #2196F3;
+            border-radius: 10px;
+            text-align: center;
+            width: 120px;
+            margin: 0 1rem;
+        }
+        
+        .math-submit {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .continue-btn {
+            background: linear-gradient(45deg, #4CAF50, #66BB6A);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            width: 100%;
+        }
+        
+        .start-screen {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .game-info {
+            background: #f8f9fa;
+            padding: 2rem;
+            border-radius: 15px;
+            margin: 2rem 0;
+            border-left: 4px solid #e91e63;
+        }
+        
+        .start-btn {
+            background: linear-gradient(45deg, #e91e63, #ff4081);
+            color: white;
+            border: none;
+            padding: 1.5rem 3rem;
+            font-size: 1.3rem;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 1rem;
+        }
+        
+        .start-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(233, 30, 99, 0.4);
+        }
+        
+        .vibe-hint {
+            background: #fff8e1;
+            color: #f57f17;
+            padding: 1rem;
+            border-radius: 10px;
+            text-align: center;
+            margin: 1rem 0;
+            border-left: 4px solid #ffc107;
+            font-style: italic;
+        }
+        
+        .ending-screen {
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .ending-title {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+        
+        .ending-content {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .replay-btn {
+            background: linear-gradient(45deg, #9C27B0, #BA68C8);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            font-size: 1.1rem;
+            border-radius: 15px;
+            cursor: pointer;
+            margin: 0.5rem;
+        }
+        
+        .debug-info {
+            background: #f5f5f5;
+            padding: 1rem;
+            border-radius: 10px;
+            margin-top: 2rem;
+            font-family: monospace;
+            font-size: 0.9rem;
+            color: #666;
+            display: none;
+        }
+        
+        @keyframes heartbeat {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        /* Bubble Meter Styling */
+        .meter-hud {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 15px;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .meter-display {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .meter-bubble {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 12px 20px;
+            font-family: 'Arial', sans-serif;
+            font-weight: bold;
+            font-size: 18px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            border: 3px solid;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 120px;
+            justify-content: center;
+            animation: bubbleFloat 3s ease-in-out infinite;
+        }
+        
+        .love-bubble {
+            border-color: #ff6b9d;
+            color: #d63384;
+            background: linear-gradient(135deg, rgba(255, 182, 193, 0.9), rgba(255, 255, 255, 0.95));
+        }
+        
+        .drama-bubble {
+            border-color: #ff4757;
+            color: #dc3545;
+            background: linear-gradient(135deg, rgba(255, 99, 99, 0.9), rgba(255, 255, 255, 0.95));
+        }
+        
+        @keyframes bubbleFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-5px); }
+        }
+        
+        .meter-bubble:hover {
+            transform: translateY(-3px) scale(1.05);
+            transition: all 0.3s ease;
+        }
+        
+        .heart {
+            animation: heartbeat 2s ease-in-out infinite;
+            display: inline-block;
+        }
+        
+        /* Mobile Bubble positioning */
+        @media (max-width: 768px) {
+            .meter-hud {
+                top: 10px;
+                left: 10px;
+                right: 10px;
+                transform: none;
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .meter-display {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .meter-bubble {
+                font-size: 16px;
+                padding: 10px 16px;
+                min-width: 100px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .villa-title {
+                font-size: 2rem;
+            }
+            
+            .game-container {
+                padding: 0.5rem;
+            }
+            
+            .villa-header, .game-screen {
+                padding: 1rem;
+            }
+            
+            .dialogue-bubble-container {
+                flex-direction: column;
+                gap: 0.8rem;
+            }
+            
+            .avatar-container {
+                align-self: center;
+            }
+            
+            .message-card::before {
+                display: none;
+            }
+            
+            .message-card {
+                border-left: none;
+                border-top: 4px solid #e91e63;
+            }
+            
+            .narrator-card {
+                border-top-color: #e91e63;
+            }
+            
+            /* Legacy mobile support */
+            .character-reaction {
+                flex-direction: column;
+            }
+            
+            .character-card {
+                margin-right: 0;
+                margin-bottom: 0.8rem;
+                min-width: auto;
+            }
+            
+            .speech-bubble::before {
+                display: none;
+            }
+            
+            .speech-bubble {
+                border-left: none;
+                border-top: 4px solid #e91e63;
+            }
+        }
+        
+        /* COMPACT SINGLE-SPEAKER LAYOUT STYLES */
+        .single-line-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 50vh;
+            justify-content: center;
+            padding: min(12vh, 96px) 1rem;
+        }
+        
+        .single-line-view {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            width: 100%;
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .speaker-avatar {
+            flex-shrink: 0;
+        }
+        
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            border: 2px solid #e91e63;
+            border-radius: 50%;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .avatar-image {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            background: #f0f0f0;
+        }
+        
+        .avatar-fallback {
+            width: 68px;
+            height: 68px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            background: #e91e63;
+        }
+        
+        .speech-bubble {
+            flex: 1;
+            max-width: min(680px, 72vw);
+            position: relative;
+        }
+        
+        .bubble-tail {
+            position: absolute;
+            left: -12px;
+            top: 28px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 12px solid white;
+            filter: drop-shadow(-2px 0 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .bubble-content {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            border-left: 4px solid #e91e63;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .bubble-content.narration {
+            background: #fff7f9;
+        }
+        
+        .speaker-name {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        
+        .speaker-name.narrator {
+            font-weight: bold;
+        }
+        
+        .speaker-text {
+            color: #2c2c2c;
+            line-height: 1.6;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .progress-indicator {
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        .choice-buttons {
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .choice-button {
+            background: white;
+            border: 2px solid #e91e63;
+            border-radius: 12px;
+            padding: 12px 16px;
+            color: #2c2c2c;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 500;
+            text-align: left;
+        }
+        
+        .choice-button:hover {
+            background: #fef7f7;
+            border-color: #c2185b;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(233, 30, 99, 0.2);
+        }
+        
+        .choice-button.locked {
+            background: #f5f5f5;
+            border-color: #bdc3c7;
+            color: #7f8c8d;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .choice-button.locked:hover {
+            background: #f5f5f5;
+            border-color: #bdc3c7;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        /* Mobile responsive adjustments */
+        @media (max-width: 768px) {
+            .single-line-container {
+                padding: min(8vh, 64px) 1rem;
+            }
+            
+            .single-line-view {
+                gap: 1rem;
+            }
+            
+            .avatar-circle {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .avatar-image {
+                width: 52px;
+                height: 52px;
+            }
+            
+            .avatar-fallback {
+                width: 52px;
+                height: 52px;
+                font-size: 1.2rem;
+            }
+            
+            .bubble-content {
+                padding: 14px;
+            }
+            
+            .speaker-text {
+                font-size: 14px;
+            }
+            
+            .progress-indicator {
+                font-size: 0.8rem;
+                padding: 0.6rem 1.2rem;
+            }
+            
+            .choice-button {
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="game-container">
+        <div class="villa-header">
+            <div class="villa-title">🏝️ Love Island USA: Villa Parody 🏝️</div>
+            <div class="villa-subtitle">A choose-your-own-adventure demo • Seasons 6 & 7 Cast</div>
+        </div>
+        
+        <!-- Start Screen -->
+        <div id="startScreen" class="game-screen active">
+            <div class="start-screen">
+                <div class="game-info">
+                    <h3>🌹 Welcome to the Villa! 🌹</h3>
+                    <p><strong>5-Day Mini-Season</strong> • Hidden Drama & Loyalty meters</p>
+                    <p><strong>Math Challenges</strong> • Multiple endings based on your choices</p>
+                    <p><strong>Cast:</strong> Real islanders from S6 & S7 • Hosted by Ariana Madix</p>
+                    <p><strong>Playtime:</strong> 20-30 minutes • Highly replayable</p>
+                </div>
+                
+                <button class="start-btn" onclick="game.startGame()">🏝️ Enter the Villa</button>
+                <button class="start-btn" onclick="game.showRules()">📖 Game Rules</button>
+                <button class="start-btn" onclick="game.showAvatarValidation()" style="background: #9b59b6;">🔍 Dev: Avatar Validation</button>
+            </div>
+        </div>
+        
+        <!-- Game Screen -->
+        <div id="gameScreen" class="game-screen">
+            <div id="dayHeader" class="day-header"></div>
+            
+            <div id="narratorSection" class="narrator-text">
+                <div class="narrator-name">Ariana Madix:</div>
+                <div id="narratorText"></div>
+            </div>
+            
+            <div id="sceneSection" class="scene-content">
+                <div id="sceneTitle" class="scene-title"></div>
+                <div id="sceneText" class="scene-text"></div>
+            </div>
+            
+            <div id="mathChallenge" class="math-challenge" style="display: none;">
+                <div>🧠 <strong>Quick Math Challenge!</strong> 🧠</div>
+                <div>Solve this to boost your Loyalty with the islanders:</div>
+                <div id="mathProblem" class="math-problem"></div>
+                <input type="number" id="mathInput" class="math-input" placeholder="?">
+                <button id="mathSubmit" class="math-submit" onclick="game.solveMath()">Submit</button>
+            </div>
+            
+            <div id="choices" class="choices"></div>
+            
+            <div id="reactions" class="reactions" style="display: none;">
+                <!-- Single-line dialogue will render here -->
+            </div>
+            
+            <div id="vibeHint" class="vibe-hint" style="display: none;"></div>
+            
+            <button id="continueBtn" class="continue-btn" style="display: none;" onclick="game.continue()">Continue</button>
+            
+            <div id="debugInfo" class="debug-info"></div>
+        </div>
+        
+        <!-- Ending Screen -->
+        <div id="endingScreen" class="game-screen">
+            <div class="ending-screen">
+                <div id="endingTitle" class="ending-title"></div>
+                <div id="endingContent" class="ending-content"></div>
+                <button class="replay-btn" onclick="game.restart()">🔄 Play Again</button>
+                <button class="replay-btn" onclick="game.showStats()">📊 Show Stats</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>

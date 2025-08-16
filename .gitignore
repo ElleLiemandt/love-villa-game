@@ -1,0 +1,31 @@
+# Development files
+debug*.html
+test-*.html
+simple-test.html
+
+# Documentation (keep main ones)
+DEBUGGING_SUMMARY.md
+FIXED_SUMMARY.md
+COMPACT_IMPLEMENTATION.md
+ARIANA_INTRO_COMPLETE.md
+IMPLEMENTATION_DIFF.md
+SINGLE_SPEAKER_DIFF.md
+SINGLE_SPEAKER_IMPLEMENTATION.md
+
+# Old versions
+This Weekend V2*.md
+storyline-engine.js
+vanilla-integration.js
+
+# TypeScript setup (if not using)
+src/
+tsconfig.json
+package-typescript.json
+README_TYPESCRIPT.md
+
+# System files
+.DS_Store
+*.log
+
+# Node modules if added later
+node_modules/
