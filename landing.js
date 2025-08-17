@@ -29,7 +29,7 @@ class LandingHandler {
         testImg.onload = () => {
             console.log('SUCCESS: Background loaded from /public/assets/backgrounds/Newbackground.png');
         };
-        testImg.src = '/public/assets/backgrounds/Newbackground.png';
+        testImg.src = 'public/assets/backgrounds/Newbackground.png';
         
         // Show landing view
         this.showLandingView();

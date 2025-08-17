@@ -85,10 +85,10 @@ class LoveIslandGame {
     preloadAssets() {
         // Preload beach background
         const beachImg = new Image();
-        beachImg.src = '/public/assets/avatars/Newbackground.png';
+        beachImg.src = 'public/assets/avatars/Newbackground.png';
         
         // Villa background is set in CSS
-        this.villaBackgroundPath = '/public/assets/backgrounds/villa_day.png';
+        this.villaBackgroundPath = 'public/assets/backgrounds/villa_day.png';
         console.log('Assets preloaded');
     }
     
@@ -355,17 +355,17 @@ class LoveIslandGame {
         const villaImg = new Image();
         villaImg.onload = () => {
             console.log('Villa background preloaded: villa-bg-day.png');
-            this.villaBackgroundPath = '/public/assets/villa-bg-day.png';
+            this.villaBackgroundPath = 'public/assets/villa-bg-day.png';
         };
         villaImg.onerror = () => {
             console.log('villa-bg-day.png not found, using fallback: villa_day.png');
-            this.villaBackgroundPath = '/public/assets/backgrounds/villa_day.png';
+            this.villaBackgroundPath = 'public/assets/backgrounds/villa_day.png';
             
             // Preload fallback
             const fallbackImg = new Image();
             fallbackImg.src = this.villaBackgroundPath;
         };
-        villaImg.src = '/public/assets/villa-bg-day.png';
+        villaImg.src = 'public/assets/villa-bg-day.png';
     }
     
     transitionToIntro() {

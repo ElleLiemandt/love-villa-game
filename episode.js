@@ -49,7 +49,7 @@ class EpisodeDialog {
         // Cutscene registry
         this.CUTSCENES = {
             nic_kiss_pool: {
-                bg: '/public/assets/backgrounds/villa_day.png',
+                bg: 'public/assets/backgrounds/villa_day.png',
                 steps: [
                     // STEP 1: NIC KISS
                     { type: 'say', speakerId: 'nic', text: "(leans closer) I can't hold back anymore…" },
@@ -92,7 +92,7 @@ class EpisodeDialog {
             
 
             bryanCoupleIntro: {
-                bg: '/public/assets/backgrounds/villa_day.png',  // Fire pit background
+                bg: 'public/assets/backgrounds/villa_day.png',  // Fire pit background
                 steps: [
                     { type: 'say', speakerId: 'bryan', text: "(smiling) You know… when you picked me, I swear my heart skipped a beat." },
                     { type: 'say', speakerId: 'you', text: "(teasing) Oh really? You didn't look nervous at all." },
@@ -110,7 +110,7 @@ class EpisodeDialog {
             
             // Recoupling ceremony cutscenes
             bryan_recouple_excited: {
-                bg: '/public/assets/backgrounds/villa_night.png',
+                bg: 'public/assets/backgrounds/villa_night.png',
                 steps: [
                     { type: 'say', speakerId: 'bryan', text: "(beaming) You picked me again… I swear you won't regret this." },
                     { type: 'say', speakerId: 'narration', text: "Bryan lifts you off your feet, grinning ear to ear." },
@@ -121,7 +121,7 @@ class EpisodeDialog {
             },
             
             nic_recouple_excited: {
-                bg: '/public/assets/backgrounds/villa_night.png',
+                bg: 'public/assets/backgrounds/villa_night.png',
                 steps: [
                     { type: 'say', speakerId: 'nic', text: "(smirking, relieved) So it's me, huh? Smart choice." },
                     { type: 'say', speakerId: 'narration', text: "Nic pulls you close, brushing a kiss on your cheek in front of everyone." },
@@ -983,7 +983,7 @@ class EpisodeDialog {
             // Reset to villa background for Day 1
             const nextView = document.getElementById('nextView');
             if (nextView) {
-                nextView.style.backgroundImage = "url('/public/assets/backgrounds/villa_day.png')";
+                nextView.style.backgroundImage = "url('public/assets/backgrounds/villa_day.png')";
                 nextView.style.backgroundSize = 'cover';
                 nextView.style.backgroundPosition = 'center';
                 nextView.style.backgroundRepeat = 'no-repeat';
@@ -1358,7 +1358,7 @@ class EpisodeDialog {
                                     setTimeout(async () => {
                                         container.style = '';
                                         // Change background to night after the interstitial
-                                        this.currentBackground = '/public/assets/backgrounds/villa_night.png';
+                                        this.currentBackground = 'public/assets/backgrounds/villa_night.png';
                                         this.updateBackground();
                                         console.log('BACKGROUND CHANGE → villa_night.png');
                                         
@@ -1480,7 +1480,7 @@ class EpisodeDialog {
                                     setTimeout(async () => {
                                         container.style = '';
                                         // Change background to night after the interstitial
-                                        this.currentBackground = '/public/assets/backgrounds/villa_night.png';
+                                        this.currentBackground = 'public/assets/backgrounds/villa_night.png';
                                         this.updateBackground();
                                         console.log('BACKGROUND CHANGE → villa_night.png');
                                         
@@ -1828,8 +1828,8 @@ class EpisodeDialog {
             reactionSteps.push({
                 type: 'background_transition',
                 id: 'd2_bg_transition',
-                from: '/public/assets/backgrounds/kitchen.png',
-                to: '/public/assets/backgrounds/villa_day.png'
+                from: 'public/assets/backgrounds/kitchen.png',
+                to: 'public/assets/backgrounds/villa_day.png'
             });
             
             // Add Nic's thought (using player's name)
@@ -2044,7 +2044,7 @@ class EpisodeDialog {
         // Set bedroom background on the parent nextView
         const nextView = document.getElementById('nextView');
         if (nextView) {
-            nextView.style.backgroundImage = "url('/public/assets/backgrounds/Bedroom.png')";
+            nextView.style.backgroundImage = "url('public/assets/backgrounds/Bedroom.png')";
             nextView.style.backgroundSize = 'cover';
             nextView.style.backgroundPosition = 'center';
             nextView.style.backgroundRepeat = 'no-repeat';
@@ -2105,9 +2105,9 @@ class EpisodeDialog {
         
         // Create 3 outfit choice circles
         const outfitOptions = [
-            { path: '/public/assets/bombshells/outfitchoice.png', name: 'Outfit 1' },
-            { path: '/public/assets/bombshells/outfitchoice1.png', name: 'Outfit 2' },
-            { path: '/public/assets/bombshells/outfitchoice3.png', name: 'Outfit 3' }
+            { path: 'public/assets/bombshells/outfitchoice.png', name: 'Outfit 1' },
+            { path: 'public/assets/bombshells/outfitchoice1.png', name: 'Outfit 2' },
+            { path: 'public/assets/bombshells/outfitchoice3.png', name: 'Outfit 3' }
         ];
         
         const outfitCircles = [];
@@ -3243,7 +3243,7 @@ class EpisodeDialog {
         this.steps = [];
         
         // Set the background to villa pool
-        this.currentBackground = '/public/assets/backgrounds/villa_day.png';
+        this.currentBackground = 'public/assets/backgrounds/villa_day.png';
         this.updateBackground();
         
         // Create the 10-exchange sequence
@@ -3398,7 +3398,7 @@ class EpisodeDialog {
         this.steps = [];
         
         // Set the background to villa night
-        this.currentBackground = '/public/assets/backgrounds/villa_night.png';
+        this.currentBackground = 'public/assets/backgrounds/villa_night.png';
         this.updateBackground();
         
         // Bryan's opening lines
@@ -3539,7 +3539,7 @@ class EpisodeDialog {
         this.steps = [];
         
         // Set the background to kitchen
-        this.currentBackground = '/public/assets/backgrounds/kitchen.png';
+        this.currentBackground = 'public/assets/backgrounds/kitchen.png';
         
         // Check if the kitchen background exists
         const img = new Image();
@@ -3688,7 +3688,7 @@ class EpisodeDialog {
             nextView.style.backgroundRepeat = 'no-repeat';
         } else {
             // Default to villa background
-            nextView.style.backgroundImage = "url('/public/assets/backgrounds/villa_day.png')";
+            nextView.style.backgroundImage = "url('public/assets/backgrounds/villa_day.png')";
             nextView.style.backgroundSize = 'cover';
             nextView.style.backgroundPosition = 'center';
             nextView.style.backgroundRepeat = 'no-repeat';
@@ -3709,7 +3709,7 @@ class EpisodeDialog {
         this.steps = [];
         
         // Set the background to bedroom
-        this.currentBackground = '/public/assets/backgrounds/Bedroom.png';
+        this.currentBackground = 'public/assets/backgrounds/Bedroom.png';
         this.updateBackground();
         
         // Navigate directly to outfit selection - no dialogue first
@@ -4048,7 +4048,7 @@ class EpisodeDialog {
         
         const avatarImg = document.createElement('img');
         avatarImg.className = 'episode-avatar-img';
-        avatarImg.src = '/public/assets/avatars/ariana.png';
+        avatarImg.src = 'public/assets/avatars/ariana.png';
         avatarImg.alt = 'ariana';
         
         avatarCircle.appendChild(avatarImg);
@@ -4425,7 +4425,7 @@ class EpisodeDialog {
                         setTimeout(async () => {
                             container.style = '';
                             // Change background to night after the interstitial
-                            this.currentBackground = '/public/assets/backgrounds/villa_night.png';
+                            this.currentBackground = 'public/assets/backgrounds/villa_night.png';
                             this.updateBackground();
                             console.log('BACKGROUND CHANGE → villa_night.png');
                             
@@ -4641,7 +4641,7 @@ class EpisodeDialog {
         
         const avatarImg = document.createElement('img');
         avatarImg.className = 'episode-avatar-img';
-        avatarImg.src = '/public/assets/avatars/ariana.png';
+        avatarImg.src = 'public/assets/avatars/ariana.png';
         avatarImg.alt = 'ariana';
         
         avatarCircle.appendChild(avatarImg);
@@ -4712,7 +4712,7 @@ class EpisodeDialog {
             avatar.src = this.getAvatarPath(option.id);
             avatar.alt = option.text;
             avatar.onerror = () => {
-                avatar.src = '/public/assets/avatars/_fallback.png';
+                avatar.src = 'public/assets/avatars/_fallback.png';
             };
             
             avatarContainer.appendChild(avatar);
@@ -4848,23 +4848,23 @@ class EpisodeDialog {
         }
         
         const avatarMap = {
-            'narration': '/public/assets/avatars/ariana.png',
-            'ariana': '/public/assets/avatars/ariana.png',
-            'nic': '/public/assets/avatars/nic.png',
-            'rob': '/public/assets/avatars/Robb.png',
-            'miguel': '/public/assets/avatars/miguel.png',
-            'pepe': '/public/assets/avatars/pepe.png',
-            'bryan': '/public/assets/avatars/bryan.png',
-            'kenny': '/public/assets/avatars/kenny.png',
-            'amaya': '/public/assets/avatars/Amaya.png',
-            'jana': '/public/assets/avatars/Jana.png',
-            'huda': '/public/assets/avatars/Huda.png',
-            'olandria': '/public/assets/avatars/olandria.png', 
-            'serena': '/public/assets/avatars/serena.png',
-            'chris': '/public/assets/avatars/chris.png'
+            'narration': 'public/assets/avatars/ariana.png',
+            'ariana': 'public/assets/avatars/ariana.png',
+            'nic': 'public/assets/avatars/nic.png',
+            'rob': 'public/assets/avatars/Robb.png',
+            'miguel': 'public/assets/avatars/miguel.png',
+            'pepe': 'public/assets/avatars/pepe.png',
+            'bryan': 'public/assets/avatars/bryan.png',
+            'kenny': 'public/assets/avatars/kenny.png',
+            'amaya': 'public/assets/avatars/Amaya.png',
+            'jana': 'public/assets/avatars/Jana.png',
+            'huda': 'public/assets/avatars/Huda.png',
+            'olandria': 'public/assets/avatars/olandria.png', 
+            'serena': 'public/assets/avatars/serena.png',
+            'chris': 'public/assets/avatars/chris.png'
         };
         
-        return avatarMap[speakerId] || '/public/assets/avatars/_fallback.png';
+        return avatarMap[speakerId] || 'public/assets/avatars/_fallback.png';
     }
     
     getSpeakerName(speakerId) {
@@ -5011,7 +5011,7 @@ class EpisodeDialog {
         
         const avatarImg = document.createElement('img');
         avatarImg.className = 'episode-avatar-img';
-        avatarImg.src = '/public/assets/avatars/ariana.png';
+        avatarImg.src = 'public/assets/avatars/ariana.png';
         avatarImg.alt = 'ariana';
         
         avatarCircle.appendChild(avatarImg);
@@ -5720,7 +5720,7 @@ class EpisodeDialog {
         
         const avatarImg = document.createElement('img');
         avatarImg.className = 'episode-avatar-img';
-        avatarImg.src = '/public/assets/avatars/ariana.png';
+        avatarImg.src = 'public/assets/avatars/ariana.png';
         avatarImg.alt = 'ariana';
         avatarImg.onerror = () => {
             avatarCircle.innerHTML = `<div class="episode-avatar-fallback">A</div>`;

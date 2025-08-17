@@ -66,7 +66,7 @@ class BombshellSelector {
         if (this.bombshells.length === 0) {
             this.bombshells.push({
                 name: 'Elle (Fallback)',
-                path: '/public/assets/avatars/silhouette.png',
+                path: 'public/assets/avatars/silhouette.png',
                 filename: 'fallback.png'
             });
         }
