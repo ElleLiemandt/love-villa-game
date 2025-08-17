@@ -1,18 +1,11 @@
 {
   "version": 2,
   "name": "love-villa-game",
-  "builds": [
-    {
-      "src": "/**",
-      "use": "@vercel/static"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
-    }
-  ],
+  "outputDirectory": ".",
+  "buildCommand": "",
+  "devCommand": "",
+  "installCommand": "",
+  "framework": null,
   "headers": [
     {
       "source": "/(.*)",
@@ -28,9 +21,15 @@
       "headers": [
         {
           "key": "Cache-Control",
-          "value": "public, max-age=86400"
+          "value": "public, max-age=86400, immutable"
         }
       ]
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
   ]
 }
