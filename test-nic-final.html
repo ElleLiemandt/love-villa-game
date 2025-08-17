@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🔧 Final Nic Avatar Test</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f0f0; 
+        }
+        .result { 
+            padding: 12px; 
+            margin: 10px 0; 
+            border-radius: 6px; 
+            font-weight: bold;
+        }
+        .pass { background: #d4edda; color: #155724; }
+        .fail { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button { 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            margin: 10px 5px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            background: #007bff; 
+            color: white; 
+        }
+        .avatar-test {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            border: 2px solid #34495E;
+        }
+        .test-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 2px solid #34495E;
+            object-fit: cover;
+            object-position: center;
+            margin: 10px;
+        }
+        .comparison {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <h1>🔧 Final Nic Avatar Test</h1>
+    
+    <div class="result info">
+        Testing Nic avatar loading with cache-busting...
+    </div>
+    
+    <div id="testResults"></div>
+    
+    <button onclick="runFinalTest()">🔍 Run Final Avatar Test</button>
+    <button onclick="openGame()">🎮 Test in Full Game</button>
+    
+    <div id="avatarComparison" class="avatar-test" style="display: none;">
+        <h3>👤 Avatar Comparison:</h3>
+        <div class="comparison">
+            <div>
+                <h4>Direct File Load:</h4>
+                <img id="directAvatar" class="test-avatar" src="public/assets/avatars/nic.png" alt="Direct Nic" onerror="this.style.border='3px solid red';">
+                <br><small>public/assets/avatars/nic.png</small>
+            </div>
+            <div>
+                <h4>Via Character System:</h4>
+                <img id="systemAvatar" class="test-avatar" alt="System Nic" onerror="this.style.border='3px solid red';">
+                <br><small id="systemPath">Loading...</small>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+    <script>
+        function addResult(message, passed) {
+            const div = document.createElement('div');
+            div.className = `result ${passed ? 'pass' : 'fail'}`;
+            div.innerHTML = `${passed ? '✅' : '❌'} ${message}`;
+            document.getElementById('testResults').appendChild(div);
+        }
+        
+        function runFinalTest() {
+            document.getElementById('testResults').innerHTML = '';
+            
+            try {
+                // Test character system
+                const testGame = new LoveIslandGame();
+                const nicInfo = testGame.getCharacterInfo('nic');
+                
+                addResult(`Character found: ${nicInfo.name}`, nicInfo.name === 'Nic');
+                addResult(`Avatar path correct: ${nicInfo.avatarSrc}`, nicInfo.avatarSrc.includes('nic.png'));
+                addResult(`Accent color: ${nicInfo.accentColor}`, nicInfo.accentColor === '#34495E');
+                
+                // Show comparison
+                const comparison = document.getElementById('avatarComparison');
+                const systemImg = document.getElementById('systemAvatar');
+                const systemPath = document.getElementById('systemPath');
+                
+                systemImg.src = nicInfo.avatarSrc + '?v=' + Date.now();
+                systemPath.textContent = nicInfo.avatarSrc;
+                comparison.style.display = 'block';
+                
+                // Test direct loading
+                const directTest = new Image();
+                directTest.onload = () => {
+                    addResult('✅ nic.png loads successfully from direct path', true);
+                };
+                directTest.onerror = () => {
+                    addResult('❌ nic.png FAILED to load from direct path', false);
+                };
+                directTest.src = 'public/assets/avatars/nic.png?v=' + Date.now();
+                
+                addResult('Cache-busted test completed - check images above', true);
+                
+            } catch (error) {
+                addResult(`Test failed: ${error.message}`, false);
+            }
+        }
+        
+        function openGame() {
+            window.open('/', '_blank');
+        }
+        
+        // Auto-run on load
+        window.onload = () => {
+            setTimeout(runFinalTest, 100);
+        };
+    </script>
+</body>
+</html>

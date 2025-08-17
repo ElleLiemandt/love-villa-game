@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Reactions</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; }
+        .success { background: #e6ffe6; }
+        #reactions { border: 2px solid #333; min-height: 200px; margin: 10px 0; padding: 10px; }
+        button { padding: 10px 20px; margin: 5px; font-size: 14px; }
+        
+        /* Include the compact single-speaker styles */
+        .single-line-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 50vh;
+            justify-content: center;
+            padding: min(12vh, 96px) 1rem;
+        }
+        
+        .single-line-view {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .speaker-avatar {
+            flex-shrink: 0;
+        }
+        
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            border: 2px solid #e91e63;
+            border-radius: 50%;
+            padding: 3px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .speech-bubble {
+            flex: 1;
+            max-width: min(680px, 72vw);
+            position: relative;
+        }
+        
+        .bubble-tail {
+            position: absolute;
+            left: -12px;
+            top: 28px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 12px solid white;
+            filter: drop-shadow(-2px 0 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .bubble-content {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            border-left: 4px solid #e91e63;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .bubble-content.narration {
+            background: #fff7f9;
+        }
+        
+        .speaker-name {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        
+        .speaker-text {
+            color: #2c2c2c;
+            line-height: 1.6;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .progress-indicator {
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+    </style>
+</head>
+<body>
+    <h1>Test Single Speaker Reactions</h1>
+    
+    <div class="debug">
+        <h3>Test Controls</h3>
+        <button onclick="testReactions()">Test Basic Reactions</button>
+        <button onclick="testSingleReaction()">Test Single Reaction</button>
+        <button onclick="clearReactions()">Clear</button>
+    </div>
+    
+    <div class="debug">
+        <h3>Reactions Container</h3>
+        <div id="reactions" style="display: block;">
+            Reactions will appear here...
+        </div>
+    </div>
+    
+    <div class="debug">
+        <h3>Console Output</h3>
+        <pre id="console" style="max-height: 200px; overflow-y: auto;"></pre>
+    </div>
+    
+    <div style="display: none;">
+        <button id="continueBtn" onclick="alert('Continue clicked!')">Continue</button>
+    </div>
+
+    <script>
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const logOutput = document.getElementById('console');
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            logOutput.textContent += '[' + new Date().toLocaleTimeString() + '] ' + args.join(' ') + '\n';
+            logOutput.scrollTop = logOutput.scrollHeight;
+        };
+        
+        console.log('Starting test page...');
+        
+        function clearReactions() {
+            document.getElementById('reactions').innerHTML = 'Cleared...';
+            document.getElementById('continueBtn').style.display = 'none';
+        }
+        
+        function testSingleReaction() {
+            console.log('Testing single reaction...');
+            
+            // Simulate a single reaction step
+            const step = {
+                type: 'say',
+                id: 'test_1',
+                speakerId: 'serena',
+                text: 'OMG that was absolutely incredible! I cannot believe what just happened!'
+            };
+            
+            const character = {
+                name: 'Serena',
+                avatarSrc: 'public/assets/avatars/serena.png',
+                accentColor: '#FF6B9D'
+            };
+            
+            renderTestStep(step, character);
+        }
+        
+        function testReactions() {
+            console.log('Testing multiple reactions...');
+            
+            // Simulate the game's reaction system
+            const reactions = [
+                'Serena: OMG that was absolutely incredible!',
+                'Nic: I am so confused right now...',
+                'Leah: Wait, what just happened?'
+            ];
+            
+            // Convert to step format like the game does
+            const steps = reactions.map((reaction, index) => {
+                const [name, quote] = reaction.split(': ');
+                const characterKey = name.toLowerCase();
+                
+                return {
+                    type: 'say',
+                    id: `reaction_${index}`,
+                    speakerId: characterKey,
+                    text: quote
+                };
+            });
+            
+            console.log('Created steps:', steps);
+            
+            // Render first step
+            currentSteps = steps;
+            currentIndex = 0;
+            renderCurrentTestStep();
+        }
+        
+        let currentSteps = [];
+        let currentIndex = 0;
+        
+        function renderCurrentTestStep() {
+            if (currentIndex >= currentSteps.length) {
+                console.log('All steps completed, showing continue button');
+                document.getElementById('continueBtn').style.display = 'block';
+                return;
+            }
+            
+            const step = currentSteps[currentIndex];
+            console.log('Rendering step:', step);
+            
+            const characterMap = {
+                'serena': { name: 'Serena', avatarSrc: 'public/assets/avatars/serena.png', accentColor: '#FF6B9D' },
+                'nic': { name: 'Nic', avatarSrc: 'public/assets/avatars/nic.png', accentColor: '#34495E' },
+                'leah': { name: 'Leah', avatarSrc: 'public/assets/avatars/leah.png', accentColor: '#E2B547' }
+            };
+            
+            const character = characterMap[step.speakerId] || { 
+                name: step.speakerId, 
+                avatarSrc: 'public/assets/avatars/silhouette.png', 
+                accentColor: '#999' 
+            };
+            
+            renderTestStep(step, character);
+        }
+        
+        function renderTestStep(step, character) {
+            const reactionsDiv = document.getElementById('reactions');
+            
+            console.log('Rendering step with character:', character);
+            
+            reactionsDiv.innerHTML = `
+                <div class="single-line-container">
+                    <div class="single-line-view" id="currentSpeakerLine">
+                        <div class="speaker-avatar">
+                            <div class="avatar-circle" style="border-color: ${character.accentColor};">
+                                <img src="${character.avatarSrc}" 
+                                     alt="${character.name}" 
+                                     class="avatar-image"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-fallback" style="display: none; background: ${character.accentColor};">
+                                    ${character.name.charAt(0)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="speech-bubble">
+                            <div class="bubble-tail"></div>
+                            <div class="bubble-content">
+                                <div class="speaker-name" style="color: ${character.accentColor};">
+                                    ${character.name}
+                                </div>
+                                <div class="speaker-text">
+                                    ${step.text}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="progress-indicator">
+                        ${currentIndex + 1} / ${currentSteps.length} • Press Space or Enter to continue
+                    </div>
+                </div>
+            `;
+            
+            console.log('Step rendered successfully');
+        }
+        
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                console.log('ADVANCE key pressed');
+                currentIndex++;
+                renderCurrentTestStep();
+            }
+        });
+        
+        console.log('Test page ready');
+    </script>
+</body>
+</html>

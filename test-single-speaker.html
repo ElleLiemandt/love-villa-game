@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Single-Speaker Layout Test</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        
+        /* Villa background overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url('assets/backgrounds/villa_day.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            z-index: -2;
+        }
+        
+        /* Content overlay */
+        body::after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(2px);
+            z-index: -1;
+        }
+
+        .test-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        
+        .test-title {
+            text-align: center;
+            margin-bottom: 3rem;
+            color: #2c2c2c;
+        }
+        
+        .test-title h1 {
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(45deg, #E91E63, #FF6B9D);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .test-title p {
+            font-size: 1.1rem;
+            opacity: 0.7;
+            margin: 0;
+        }
+
+        /* Single Speaker Layout Styles */
+        .speaker-line {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 2rem 0;
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+
+        .avatar-container {
+            flex-shrink: 0;
+        }
+
+        .avatar-ring {
+            width: 80px;
+            height: 80px;
+            border: 3px solid #E91E63;
+            border-radius: 50%;
+            padding: 3px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+        }
+
+        .avatar-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+
+        .avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .speech-bubble {
+            flex: 1;
+            max-width: min(720px, 72vw);
+            position: relative;
+        }
+
+        .bubble-tail {
+            position: absolute;
+            left: -12px;
+            top: 24px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 12px solid white;
+            filter: drop-shadow(-2px 0 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .bubble-content {
+            background: white;
+            border-radius: 18px;
+            padding: 1.5rem;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #E91E63;
+        }
+
+        .speaker-name {
+            font-weight: bold;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+            color: #E91E63;
+        }
+
+        .speech-text {
+            color: #2c2c2c;
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        .controls {
+            position: fixed;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 25px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .controls button {
+            background: #E91E63;
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            margin: 0 0.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .controls button:hover {
+            background: #C2185B;
+            transform: translateY(-1px);
+        }
+
+        .progress {
+            margin-top: 0.5rem;
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .test-container {
+                padding: 1rem;
+            }
+            
+            .speaker-line {
+                gap: 1rem;
+            }
+            
+            .avatar-ring {
+                width: 64px;
+                height: 64px;
+            }
+            
+            .bubble-content {
+                padding: 1rem;
+            }
+            
+            .speech-text {
+                font-size: 0.9rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <div class="test-title">
+            <h1>🏝️ Single-Speaker Layout</h1>
+            <p>Testing the new dialogue system with villa backgrounds</p>
+        </div>
+
+        <!-- Single Speaker Line (will be updated via JavaScript) -->
+        <div id="speaker-line" class="speaker-line">
+            <div class="avatar-container">
+                <div class="avatar-ring" id="avatar-ring">
+                    <img id="avatar-image" 
+                         class="avatar-image"
+                         src="assets/avatars/ariana.png" 
+                         alt="Speaker"
+                         onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                    <div id="avatar-fallback" class="avatar-fallback">A</div>
+                </div>
+            </div>
+            
+            <div class="speech-bubble">
+                <div class="bubble-tail"></div>
+                <div class="bubble-content">
+                    <div id="speaker-name" class="speaker-name">Ariana Madix</div>
+                    <div id="speech-text" class="speech-text">
+                        Welcome to the single-speaker dialogue test! This layout shows one character at a time with their speech bubble.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Controls -->
+    <div class="controls">
+        <div>
+            <button onclick="previousLine()">⬅️ Previous</button>
+            <button onclick="nextLine()">Next ➡️</button>
+            <button onclick="toggleBackground()">🌅 Toggle Scene</button>
+        </div>
+        <div class="progress">
+            <span id="progress">1 / 8</span> • Press Space or Enter to advance
+        </div>
+    </div>
+
+    <script>
+        // Test dialogue data
+        const testDialogue = [
+            {
+                speakerId: 'ariana',
+                name: 'Ariana Madix',
+                text: 'Welcome to the villa! This single-speaker layout gives each character their moment to shine.',
+                color: '#E91E63',
+                avatar: 'ariana.png',
+                scene: 'day'
+            },
+            {
+                speakerId: 'jana',
+                name: 'JaNa',
+                text: 'OMG this is literally so cool! I love how clean and focused this layout is compared to the scrolling chat!',
+                color: '#FF8C42',
+                avatar: 'jana.png',
+                scene: 'day'
+            },
+            {
+                speakerId: 'nic',
+                name: 'Nic',
+                text: 'Yeah, it definitely feels more like watching an actual episode of Love Island. Very cinematic.',
+                color: '#34495E',
+                avatar: 'nic.png',
+                scene: 'day'
+            },
+            {
+                speakerId: 'leah',
+                name: 'Leah',
+                text: 'The speech bubble tail pointing to the avatar is a nice touch. Really connects the speaker to their words.',
+                color: '#E2B547',
+                avatar: 'leah.png',
+                scene: 'gossip'
+            },
+            {
+                speakerId: 'serena',
+                name: 'Serena',
+                text: 'And the villa background being visible behind everything makes it feel like we\'re really in the space.',
+                color: '#FF6B9D',
+                avatar: 'serena.png',
+                scene: 'gossip'
+            },
+            {
+                speakerId: 'huda',
+                name: 'Huda',
+                text: 'The responsive design is solid too - works great on mobile. No more tiny chat bubbles!',
+                color: '#E67E22',
+                avatar: 'huda.png',
+                scene: 'night'
+            },
+            {
+                speakerId: 'amaya',
+                name: 'Amaya',
+                text: 'This firepit scene background switch is perfect for dramatic moments. Really sets the mood.',
+                color: '#C8102E',
+                avatar: 'amaya.png',
+                scene: 'firepit'
+            },
+            {
+                speakerId: 'ariana',
+                name: 'Ariana Madix',
+                text: 'And that\'s a wrap on our single-speaker layout test! Space bar navigation makes it feel like a real game.',
+                color: '#E91E63',
+                avatar: 'ariana.png',
+                scene: 'night'
+            }
+        ];
+
+        let currentIndex = 0;
+        let isNightScene = false;
+
+        // Update the display
+        function updateDisplay() {
+            const line = testDialogue[currentIndex];
+            
+            // Update avatar
+            document.getElementById('avatar-ring').style.borderColor = line.color;
+            document.getElementById('avatar-image').src = `assets/avatars/${line.avatar}`;
+            document.getElementById('avatar-image').alt = line.name;
+            document.getElementById('avatar-fallback').textContent = line.name.charAt(0);
+            document.getElementById('avatar-fallback').style.backgroundColor = line.color;
+            
+            // Update speech bubble
+            document.getElementById('speaker-name').textContent = line.name;
+            document.getElementById('speaker-name').style.color = line.color;
+            document.getElementById('speech-text').textContent = line.text;
+            document.querySelector('.bubble-content').style.borderLeftColor = line.color;
+            
+            // Update progress
+            document.getElementById('progress').textContent = `${currentIndex + 1} / ${testDialogue.length}`;
+            
+            // Update background if scene changes
+            if (line.scene === 'night' || line.scene === 'firepit') {
+                if (!isNightScene) {
+                    setBackground('night');
+                    isNightScene = true;
+                }
+            } else {
+                if (isNightScene) {
+                    setBackground('day');
+                    isNightScene = false;
+                }
+            }
+            
+            // Re-trigger animation
+            const speakerLine = document.getElementById('speaker-line');
+            speakerLine.style.animation = 'none';
+            speakerLine.offsetHeight; // Trigger reflow
+            speakerLine.style.animation = 'slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards';
+        }
+
+        // Navigation functions
+        function nextLine() {
+            if (currentIndex < testDialogue.length - 1) {
+                currentIndex++;
+                updateDisplay();
+            }
+        }
+
+        function previousLine() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateDisplay();
+            }
+        }
+
+        function setBackground(scene) {
+            const backgroundImage = scene === 'night' 
+                ? 'assets/backgrounds/villa_night.png'
+                : 'assets/backgrounds/villa_day.png';
+            document.body.style.setProperty('--bg-image', `url('${backgroundImage}')`);
+            document.body.style.backgroundImage = `url('${backgroundImage}')`;
+        }
+
+        function toggleBackground() {
+            isNightScene = !isNightScene;
+            setBackground(isNightScene ? 'night' : 'day');
+        }
+
+        // Keyboard controls
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space' || e.code === 'Enter') {
+                e.preventDefault();
+                nextLine();
+            } else if (e.code === 'ArrowLeft') {
+                e.preventDefault();
+                previousLine();
+            } else if (e.code === 'ArrowRight') {
+                e.preventDefault();
+                nextLine();
+            }
+        });
+
+        // Initialize display
+        updateDisplay();
+    </script>
+</body>
+</html>

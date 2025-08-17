@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Game Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        button { padding: 10px 20px; margin: 5px; font-size: 14px; }
+        #reactions { border: 2px solid #333; min-height: 200px; margin: 10px 0; padding: 10px; display: none; }
+        #continueBtn { display: none; }
+    </style>
+</head>
+<body>
+    <h1>Simple Game Test</h1>
+    
+    <div class="debug">
+        <button onclick="startGameTest()">Start Game Test</button>
+        <button onclick="testShowReactions()">Test Show Reactions</button>
+    </div>
+    
+    <div class="debug">
+        <h3>Console Output</h3>
+        <pre id="console" style="max-height: 300px; overflow-y: auto; background: #000; color: #0f0; padding: 10px;"></pre>
+    </div>
+    
+    <!-- Game elements -->
+    <div id="reactions"></div>
+    <button id="continueBtn">Continue</button>
+
+    <script>
+        // Override console functions to capture output
+        const originalLog = console.log;
+        const originalError = console.error;
+        const logOutput = document.getElementById('console');
+        
+        function addToConsole(level, ...args) {
+            const timestamp = '[' + new Date().toLocaleTimeString() + ']';
+            const message = timestamp + ' ' + level + ': ' + args.join(' ');
+            logOutput.textContent += message + '\n';
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            addToConsole('LOG', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError(...args);
+            addToConsole('ERROR', ...args);
+        };
+        
+        window.onerror = function(message, source, lineno, colno, error) {
+            console.error('JavaScript Error:', message, 'at line', lineno);
+        };
+        
+        console.log('Simple test page loaded');
+        
+        let game;
+        
+        function startGameTest() {
+            console.log('Creating game instance...');
+            try {
+                game = new LoveIslandGame();
+                console.log('✅ Game instance created successfully');
+                
+                // Check if key methods exist
+                if (typeof game.showReactions === 'function') {
+                    console.log('✅ showReactions method exists');
+                } else {
+                    console.error('❌ showReactions method missing');
+                }
+                
+                if (typeof game.renderCurrentStep === 'function') {
+                    console.log('✅ renderCurrentStep method exists');
+                } else {
+                    console.error('❌ renderCurrentStep method missing');
+                }
+                
+            } catch (e) {
+                console.error('❌ Failed to create game instance:', e.message);
+                console.error('Stack:', e.stack);
+            }
+        }
+        
+        function testShowReactions() {
+            if (!game) {
+                console.error('Game not initialized. Run Start Game Test first.');
+                return;
+            }
+            
+            console.log('Testing showReactions...');
+            
+            try {
+                const testReactions = [
+                    'Serena: OMG that was so wild!',
+                    'Nic: I cannot believe that just happened!'
+                ];
+                
+                console.log('Calling showReactions with:', testReactions);
+                game.showReactions(testReactions);
+                console.log('✅ showReactions called successfully');
+                
+            } catch (e) {
+                console.error('❌ showReactions failed:', e.message);
+                console.error('Stack:', e.stack);
+            }
+        }
+        
+        console.log('Test functions ready');
+    </script>
+    
+    <!-- Load the actual game -->
+    <script src="game.js"></script>
+    
+    <script>
+        console.log('game.js loaded');
+    </script>
+</body>
+</html>

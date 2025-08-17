@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compact Single Speaker - WORKING VERSION</title>
+    <style>
+        body { 
+            margin: 0; 
+            font-family: Arial, sans-serif; 
+            background: linear-gradient(135deg, #FFB6C1, #FFA07A, #98D8E8);
+            min-height: 100vh;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.9);
+        }
+        
+        .controls {
+            text-align: center;
+            padding: 20px;
+        }
+        
+        button {
+            padding: 12px 24px;
+            margin: 5px;
+            border: none;
+            border-radius: 8px;
+            background: #E91E63;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background: #C2185B;
+        }
+        
+        /* COMPACT SINGLE-SPEAKER STYLES */
+        .single-line-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 50vh;
+            justify-content: center;
+            padding: min(12vh, 96px) 1rem;
+        }
+        
+        .single-line-view {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            max-width: 900px;
+            width: 100%;
+            animation: slideInLeft 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+        }
+        
+        .speaker-avatar {
+            flex-shrink: 0;
+        }
+        
+        .avatar-circle {
+            width: 72px;
+            height: 72px;
+            border: 2px solid #e91e63;
+            border-radius: 50%;
+            padding: 3px;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .avatar-image {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: #f0f0f0;
+        }
+        
+        .avatar-fallback {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: white;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+        
+        .speech-bubble {
+            flex: 1;
+            max-width: min(680px, 72vw);
+            position: relative;
+        }
+        
+        .bubble-tail {
+            position: absolute;
+            left: -12px;
+            top: 28px;
+            width: 0;
+            height: 0;
+            border-top: 8px solid transparent;
+            border-bottom: 8px solid transparent;
+            border-right: 12px solid white;
+            filter: drop-shadow(-2px 0 4px rgba(0, 0, 0, 0.1));
+        }
+        
+        .bubble-content {
+            background: white;
+            padding: 16px;
+            border-radius: 16px;
+            border-left: 4px solid #e91e63;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(5px);
+        }
+        
+        .bubble-content.narration {
+            background: #fff7f9;
+        }
+        
+        .speaker-name {
+            font-weight: bold;
+            color: #e91e63;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 0.8rem;
+        }
+        
+        .speaker-text {
+            color: #2c2c2c;
+            line-height: 1.6;
+            font-size: 15px;
+            font-weight: 500;
+        }
+        
+        .progress-indicator {
+            margin-top: 2rem;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+        
+        @keyframes slideInLeft {
+            from {
+                opacity: 0;
+                transform: translateX(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0) scale(1);
+            }
+        }
+        
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .single-line-view {
+                gap: 1rem;
+            }
+            
+            .avatar-circle {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .avatar-image {
+                width: 56px;
+                height: 56px;
+            }
+            
+            .avatar-fallback {
+                font-size: 1.2rem;
+            }
+            
+            .bubble-content {
+                padding: 14px;
+            }
+            
+            .speaker-text {
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏝️ Compact Single Speaker - WORKING VERSION 🏝️</h1>
+        <p>This shows exactly how the compact layout should look and work</p>
+    </div>
+    
+    <div class="controls">
+        <button onclick="showDemo1()">Demo: Serena</button>
+        <button onclick="showDemo2()">Demo: Nic</button>
+        <button onclick="showDemo3()">Demo: Narrator</button>
+        <button onclick="startSequence()">Start Sequence</button>
+        <button onclick="clearDemo()">Clear</button>
+    </div>
+    
+    <div id="demo-container">
+        <!-- Demo content will appear here -->
+    </div>
+
+    <script>
+        const characters = {
+            serena: { name: 'Serena', avatarSrc: 'public/assets/avatars/serena.png', accentColor: '#FF6B9D' },
+            nic: { name: 'Nic', avatarSrc: 'public/assets/avatars/nic.png', accentColor: '#34495E' },
+            narrator: { name: 'Ariana Madix', avatarSrc: 'public/assets/avatars/ariana.png', accentColor: '#667eea' }
+        };
+        
+        let currentSequence = [];
+        let currentIndex = 0;
+        
+        function clearDemo() {
+            document.getElementById('demo-container').innerHTML = '';
+        }
+        
+        function showDemo1() {
+            const step = {
+                speakerId: 'serena',
+                text: 'OMG that was absolutely incredible! I cannot believe what just happened in there!'
+            };
+            renderStep(step);
+        }
+        
+        function showDemo2() {
+            const step = {
+                speakerId: 'nic',
+                text: 'I am so confused right now... Like, what was even the point of that whole thing?'
+            };
+            renderStep(step);
+        }
+        
+        function showDemo3() {
+            const step = {
+                speakerId: 'narrator',
+                text: 'Welcome to Love Island USA! Tonight, things are about to get very interesting in the villa.'
+            };
+            renderStep(step);
+        }
+        
+        function startSequence() {
+            currentSequence = [
+                { speakerId: 'serena', text: 'OMG that was absolutely incredible!' },
+                { speakerId: 'nic', text: 'I am so confused right now...' },
+                { speakerId: 'narrator', text: 'The drama continues tomorrow night!' }
+            ];
+            currentIndex = 0;
+            showNextInSequence();
+        }
+        
+        function showNextInSequence() {
+            if (currentIndex >= currentSequence.length) {
+                clearDemo();
+                setTimeout(() => {
+                    document.getElementById('demo-container').innerHTML = `
+                        <div style="text-align: center; padding: 40px; color: white; background: rgba(0,0,0,0.7); border-radius: 20px; margin: 20px;">
+                            <h2>🎉 Sequence Complete!</h2>
+                            <p>This is how the compact single-speaker system works!</p>
+                        </div>
+                    `;
+                }, 500);
+                return;
+            }
+            
+            const step = currentSequence[currentIndex];
+            renderStep(step, true);
+            currentIndex++;
+        }
+        
+        function renderStep(step, showProgress = false) {
+            const character = characters[step.speakerId];
+            const isNarrator = step.speakerId === 'narrator';
+            
+            const progressHtml = showProgress ? `
+                <div class="progress-indicator">
+                    ${currentIndex + 1} / ${currentSequence.length} • Press Space or Enter to continue
+                </div>
+            ` : '';
+            
+            document.getElementById('demo-container').innerHTML = `
+                <div class="single-line-container">
+                    <div class="single-line-view">
+                        <div class="speaker-avatar">
+                            <div class="avatar-circle" style="border-color: ${character.accentColor};">
+                                <img src="${character.avatarSrc}" 
+                                     alt="${character.name}" 
+                                     class="avatar-image"
+                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                                <div class="avatar-fallback" style="background: ${character.accentColor};">
+                                    ${character.name.charAt(0)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="speech-bubble">
+                            <div class="bubble-tail"></div>
+                            <div class="bubble-content ${isNarrator ? 'narration' : ''}" style="border-left-color: ${character.accentColor};">
+                                <div class="speaker-name" style="color: ${character.accentColor};">
+                                    ${character.name}
+                                </div>
+                                <div class="speaker-text">
+                                    ${step.text}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    ${progressHtml}
+                </div>
+            `;
+            
+            console.log('Rendered:', character.name, step.text.substring(0, 30) + '...');
+        }
+        
+        // Keyboard navigation for sequence
+        document.addEventListener('keydown', (e) => {
+            if ((e.code === 'Space' || e.code === 'Enter') && currentSequence.length > 0) {
+                e.preventDefault();
+                showNextInSequence();
+            }
+        });
+        
+        console.log('Working demo ready! Click buttons to test.');
+    </script>
+</body>
+</html>

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Single Speaker</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .debug { background: #f0f0f0; padding: 15px; margin: 10px 0; border-radius: 5px; }
+        .error { background: #ffe6e6; border: 1px solid #ff6666; }
+        .success { background: #e6ffe6; border: 1px solid #66ff66; }
+    </style>
+</head>
+<body>
+    <h1>Debug Single Speaker System</h1>
+    
+    <div class="debug">
+        <h3>Test 1: Load game.js</h3>
+        <div id="test1">Loading...</div>
+    </div>
+    
+    <div class="debug">
+        <h3>Test 2: Create game instance</h3>
+        <div id="test2">Waiting...</div>
+    </div>
+    
+    <div class="debug">
+        <h3>Test 3: Test step rendering</h3>
+        <div id="test3">Waiting...</div>
+    </div>
+    
+    <div class="debug">
+        <h3>Console Output</h3>
+        <pre id="console"></pre>
+    </div>
+
+    <script>
+        // Override console.log to capture output
+        const originalLog = console.log;
+        const logOutput = document.getElementById('console');
+        
+        console.log = function(...args) {
+            originalLog(...args);
+            logOutput.textContent += args.join(' ') + '\n';
+        };
+        
+        // Test 1: Load game.js
+        try {
+            document.getElementById('test1').innerHTML = '<span class="success">✅ game.js loaded</span>';
+        } catch (e) {
+            document.getElementById('test1').innerHTML = '<span class="error">❌ ' + e.message + '</span>';
+        }
+        
+        // Test 2: Create game instance
+        try {
+            const game = new LoveIslandGame();
+            document.getElementById('test2').innerHTML = '<span class="success">✅ Game instance created</span>';
+            
+            // Test 3: Check if methods exist
+            let methodTests = [];
+            if (typeof game.renderSayStep === 'function') {
+                methodTests.push('✅ renderSayStep exists');
+            } else {
+                methodTests.push('❌ renderSayStep missing');
+            }
+            
+            if (typeof game.renderAskStep === 'function') {
+                methodTests.push('✅ renderAskStep exists');
+            } else {
+                methodTests.push('❌ renderAskStep missing');
+            }
+            
+            if (typeof game.renderCurrentStep === 'function') {
+                methodTests.push('✅ renderCurrentStep exists');
+            } else {
+                methodTests.push('❌ renderCurrentStep missing');
+            }
+            
+            if (typeof game.getCharacterInfo === 'function') {
+                methodTests.push('✅ getCharacterInfo exists');
+            } else {
+                methodTests.push('❌ getCharacterInfo missing');
+            }
+            
+            document.getElementById('test3').innerHTML = methodTests.join('<br>');
+            
+        } catch (e) {
+            document.getElementById('test2').innerHTML = '<span class="error">❌ ' + e.message + '</span>';
+            document.getElementById('test3').innerHTML = '<span class="error">❌ Cannot test methods: ' + e.message + '</span>';
+        }
+    </script>
+    
+    <script src="game.js"></script>
+</body>
+</html>

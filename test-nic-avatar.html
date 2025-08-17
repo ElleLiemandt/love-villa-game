@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🧪 Test Nic Avatar Update</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f0f0; 
+        }
+        .test-result { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            margin: 10px 5px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .test-btn { background: #007bff; color: white; }
+        .demo-btn { background: #28a745; color: white; }
+        .avatar-test {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .test-avatar {
+            width: 72px;
+            height: 72px;
+            border-radius: 50%;
+            border: 2px solid #34495E;
+            object-fit: cover;
+            object-position: center;
+        }
+        .console-log {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <h1>🧪 Nic Avatar Update Test</h1>
+    
+    <div id="testResults"></div>
+    
+    <button class="test-btn" onclick="runNicTests()">🔍 Test Nic Avatar</button>
+    <button class="demo-btn" onclick="testNicRendering()">🎭 Test Live Rendering</button>
+    <button class="demo-btn" onclick="openGame()">🎮 Open Full Game</button>
+    
+    <div id="avatarTest" class="avatar-test" style="display: none;">
+        <h3>👤 Nic Avatar Preview:</h3>
+        <img id="nicAvatarImg" class="test-avatar" alt="Nic">
+        <div>
+            <strong>Nic</strong><br>
+            <small>Accent Color: #34495E</small><br>
+            <small id="avatarPath"></small>
+        </div>
+    </div>
+    
+    <div id="consoleOutput" class="console-log" style="display: none;"></div>
+    
+    <script src="game.js"></script>
+    <script>
+        let consoleOutput = [];
+        
+        // Capture console logs
+        const originalLog = console.log;
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg) : String(arg)
+            ).join(' ');
+            consoleOutput.push(message);
+            
+            const outputDiv = document.getElementById('consoleOutput');
+            outputDiv.style.display = 'block';
+            outputDiv.textContent = consoleOutput.slice(-10).join('\n');
+        };
+        
+        function addResult(message, passed, isInfo = false) {
+            const div = document.createElement('div');
+            div.className = `test-result ${isInfo ? 'info' : (passed ? 'pass' : 'fail')}`;
+            div.innerHTML = `${isInfo ? '💡' : (passed ? '✅' : '❌')} ${message}`;
+            document.getElementById('testResults').appendChild(div);
+        }
+        
+        function runNicTests() {
+            document.getElementById('testResults').innerHTML = '';
+            consoleOutput = [];
+            
+            try {
+                const testGame = new LoveIslandGame();
+                addResult('Game instantiated successfully', true);
+                
+                // Test Nic character info
+                const nicInfo = testGame.getCharacterInfo('nic');
+                addResult(`Nic character found: ${nicInfo.name}`, nicInfo.name === 'Nic');
+                addResult(`Avatar path: ${nicInfo.avatarSrc}`, nicInfo.avatarSrc.includes('nic.png'));
+                addResult(`Accent color: ${nicInfo.accentColor}`, nicInfo.accentColor === '#34495E');
+                
+                // Test avatar file exists
+                const img = new Image();
+                img.onload = () => {
+                    addResult('✅ nic.png loads successfully!', true);
+                    showAvatarPreview(nicInfo);
+                };
+                img.onerror = () => {
+                    addResult('❌ nic.png failed to load', false);
+                };
+                img.src = nicInfo.avatarSrc + '?v=' + Date.now();
+                
+                addResult('All Nic avatar tests completed', true);
+                addResult('Check console output below for detailed logs', true, true);
+                
+            } catch (error) {
+                addResult(`Test failed: ${error.message}`, false);
+            }
+        }
+        
+        function showAvatarPreview(nicInfo) {
+            const preview = document.getElementById('avatarTest');
+            const img = document.getElementById('nicAvatarImg');
+            const path = document.getElementById('avatarPath');
+            
+            img.src = nicInfo.avatarSrc + '?v=' + Date.now();
+            img.style.borderColor = nicInfo.accentColor;
+            path.textContent = `Path: ${nicInfo.avatarSrc}`;
+            preview.style.display = 'flex';
+        }
+        
+        function testNicRendering() {
+            try {
+                const testGame = new LoveIslandGame();
+                
+                // Create mock DOM for testing
+                document.body.innerHTML += `
+                    <div id="reactions" style="display: none;"></div>
+                    <div id="narratorSection" style="display: none;"></div>
+                    <div id="sceneSection" style="display: none;"></div>
+                    <div id="choices" style="display: none;"></div>
+                    <div id="continueBtn" style="display: none;"></div>
+                    <div id="vibeHint" style="display: none;"></div>
+                    <div id="mathChallenge" style="display: none;"></div>
+                `;
+                
+                // Test Nic say step
+                const nicStep = {
+                    type: 'say',
+                    id: 'test_nic',
+                    speakerId: 'nic',
+                    text: 'Oi, you alright? This is a test of my new avatar!'
+                };
+                
+                testGame.renderSayStep(nicStep);
+                document.getElementById('reactions').style.display = 'block';
+                
+                addResult('✅ Nic rendered successfully in episode-style bubble!', true);
+                
+            } catch (error) {
+                addResult(`Rendering test failed: ${error.message}`, false);
+            }
+        }
+        
+        function openGame() {
+            window.open('/', '_blank');
+        }
+        
+        // Auto-run tests on page load
+        window.onload = () => {
+            setTimeout(runNicTests, 500);
+        };
+    </script>
+</body>
+</html>

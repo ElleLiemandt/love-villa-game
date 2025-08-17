@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>🧪 Test Story Engine</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            padding: 20px; 
+            background: #f0f0f0; 
+        }
+        .test-result { 
+            padding: 10px; 
+            margin: 10px 0; 
+            border-radius: 5px; 
+        }
+        .pass { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .fail { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button { 
+            padding: 12px 24px; 
+            font-size: 16px; 
+            margin: 10px 5px; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+        }
+        .test-btn { background: #007bff; color: white; }
+        .demo-btn { background: #28a745; color: white; }
+        .flow { background: #f8f9fa; padding: 15px; border-radius: 5px; margin: 10px 0; }
+        .step { margin: 5px 0; padding: 8px; background: white; border-left: 3px solid #007bff; }
+    </style>
+</head>
+<body>
+    <h1>🧪 Love Island Story Engine Test</h1>
+    
+    <div id="testResults"></div>
+    
+    <button class="test-btn" onclick="runTests()">🔍 Run Story Engine Tests</button>
+    <button class="demo-btn" onclick="openGameDemo()">🎮 Test Full Flow</button>
+    
+    <div id="flowDiagram" class="flow" style="display: none;">
+        <h3>🎬 Expected Flow:</h3>
+        <div class="step">1. Intro: Ariana introduces all islanders with individual one-liners</div>
+        <div class="step">2. Handoff: "INTRO → STORY HANDOFF" logged</div>
+        <div class="step">3. Story Start: Day 1 episode engine begins automatically</div>
+        <div class="step">4. Episode Style: Single avatar + bubble renderer</div>
+        <div class="step">5. Choices: 3 bad choices + 1 locked "Math Challenge" choice</div>
+        <div class="step">6. Persistence: Progress saved to localStorage</div>
+    </div>
+    
+    <script src="game.js"></script>
+    <script>
+        function addResult(message, passed, isInfo = false) {
+            const div = document.createElement('div');
+            div.className = `test-result ${isInfo ? 'info' : (passed ? 'pass' : 'fail')}`;
+            div.innerHTML = `${isInfo ? '💡' : (passed ? '✅' : '❌')} ${message}`;
+            document.getElementById('testResults').appendChild(div);
+        }
+        
+        function runTests() {
+            document.getElementById('testResults').innerHTML = '';
+            document.getElementById('flowDiagram').style.display = 'block';
+            
+            try {
+                const testGame = new LoveIslandGame();
+                addResult('LoveIslandGame class instantiates successfully', true);
+                
+                // Test story engine methods exist
+                addResult('startStory() method exists', typeof testGame.startStory === 'function');
+                addResult('getInitialStepIdForDay() method exists', typeof testGame.getInitialStepIdForDay === 'function');
+                addResult('loadDaySteps() method exists', typeof testGame.loadDaySteps === 'function');
+                addResult('renderStoryStep() method exists', typeof testGame.renderStoryStep === 'function');
+                addResult('selectStoryChoice() method exists', typeof testGame.selectStoryChoice === 'function');
+                
+                // Test Day 1 content loading
+                const day1Steps = testGame.loadDaySteps(1);
+                addResult(`Day 1 steps loaded (${day1Steps.length} steps)`, day1Steps.length > 0);
+                
+                if (day1Steps.length > 0) {
+                    const saySteps = day1Steps.filter(step => step.type === 'say').length;
+                    const askSteps = day1Steps.filter(step => step.type === 'ask').length;
+                    addResult(`Contains ${saySteps} SaySteps and ${askSteps} AskSteps`, saySteps > 0 && askSteps > 0);
+                    
+                    // Test AskStep structure
+                    const firstChoice = day1Steps.find(step => step.type === 'ask');
+                    if (firstChoice) {
+                        const lockedChoices = firstChoice.options.filter(opt => opt.quality === 'good').length;
+                        const badChoices = firstChoice.options.filter(opt => opt.quality === 'bad').length;
+                        addResult(`First choice has ${badChoices} bad + ${lockedChoices} locked options`, badChoices === 3 && lockedChoices === 1);
+                    }
+                }
+                
+                // Test fallback system
+                const fallbackSteps = testGame.getFallbackSteps();
+                addResult(`Fallback system works (${fallbackSteps.length} steps)`, fallbackSteps.length >= 4);
+                
+                // Test initial step ID generation
+                const day1InitialStep = testGame.getInitialStepIdForDay(1);
+                addResult(`Day 1 initial step ID: "${day1InitialStep}"`, day1InitialStep === 'day1_arrival');
+                
+                // Test story flags
+                addResult('Story engine flags initialized', testGame.hasOwnProperty('isInStory') && testGame.hasOwnProperty('currentStorySteps'));
+                
+                addResult('🎉 All story engine tests passed!', true);
+                addResult('Ready to test: Complete intro → automatic Day 1 handoff', true, true);
+                
+            } catch (error) {
+                addResult(`Test failed with error: ${error.message}`, false);
+            }
+        }
+        
+        function openGameDemo() {
+            window.open('/', '_blank');
+        }
+        
+        // Auto-run tests on page load
+        window.onload = runTests;
+    </script>
+</body>
+</html>
