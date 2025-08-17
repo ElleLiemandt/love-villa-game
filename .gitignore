@@ -1,31 +1,37 @@
-# Development files
-debug*.html
-test-*.html
-simple-test.html
-
-# Documentation (keep main ones)
-DEBUGGING_SUMMARY.md
-FIXED_SUMMARY.md
-COMPACT_IMPLEMENTATION.md
-ARIANA_INTRO_COMPLETE.md
-IMPLEMENTATION_DIFF.md
-SINGLE_SPEAKER_DIFF.md
-SINGLE_SPEAKER_IMPLEMENTATION.md
-
-# Old versions
-This Weekend V2*.md
-storyline-engine.js
-vanilla-integration.js
-
-# TypeScript setup (if not using)
-src/
-tsconfig.json
-package-typescript.json
-README_TYPESCRIPT.md
-
-# System files
-.DS_Store
-*.log
-
-# Node modules if added later
+# Dependencies
 node_modules/
+.npm/
+
+# Build outputs
+dist/
+build/
+.vite/
+
+# Environment files
+.env
+.env.local
+.env.production
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Temporary files
+*.tmp
+.temp/
+
+# Test coverage
+coverage/
+.nyc_output/
