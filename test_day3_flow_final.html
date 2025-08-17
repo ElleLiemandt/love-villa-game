@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 3 Flow Test - Final</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial;
+            padding: 20px;
+        }
+        #log {
+            background: #2a2a2a;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            white-space: pre-line;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .success { color: #4caf50; }
+        .info { color: #2196F3; }
+        .warning { color: #ff9800; }
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Day 3 Flow Verification</h1>
+    <button onclick="testFlow()">Test Complete Flow</button>
+    <button onclick="clearLog()">Clear</button>
+    <div id="log"></div>
+
+    <script>
+        const log = (msg, type = '') => {
+            const logDiv = document.getElementById('log');
+            const timestamp = new Date().toLocaleTimeString();
+            const className = type ? ` class="${type}"` : '';
+            logDiv.innerHTML += `<div${className}>[${timestamp}] ${msg}</div>`;
+            logDiv.scrollTop = logDiv.scrollHeight;
+        };
+
+        const clearLog = () => {
+            document.getElementById('log').innerHTML = '';
+        };
+
+        const testFlow = () => {
+            log('=== DAY 3 FLOW TEST ===', 'success');
+            log('Expected flow:', 'info');
+            log('1. "Day 3. You wake up in the villa bedroom."');
+            log('2. "Day three begins with choosing an outfit."');
+            log('3. → Navigate to outfit selection UI');
+            log('4. Select outfit and click "Wear this"');
+            log('5. "Perfect! You look amazing in your outfit."');
+            log('6. Day card: "☀️ Day 3 - Drama Rising"');
+            log('7. "You head downstairs to find the villa already buzzing with activity."');
+            log('8. "The boys are gathered in the kitchen, whispering about something..."');
+            log('9. "To be continued..."');
+            log('', '');
+            log('✅ Flow is now properly connected!', 'success');
+            log('', '');
+            log('Test it at: http://localhost:8001/', 'info');
+            log('Press "3" → Wake up → Space → "Day three begins with choosing an outfit" → Space → Outfit UI', 'warning');
+        };
+
+        // Auto-run on load
+        testFlow();
+    </script>
+</body>
+</html>

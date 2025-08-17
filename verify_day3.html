@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Verify Day 3 Complete Flow</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        #controls {
+            background: #2a2a2a;
+            padding: 20px;
+            border-bottom: 2px solid #444;
+        }
+        
+        button {
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #764ba2;
+        }
+        
+        #status {
+            background: #333;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-family: monospace;
+        }
+        
+        #nextView {
+            flex: 1;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            position: relative;
+        }
+        
+        #episodeContainer {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        
+        .success { color: #4caf50; }
+        .error { color: #f44336; }
+        .info { color: #2196F3; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <h2>Day 3 Flow Verification</h2>
+        <button onclick="startDay3()">Start Day 3</button>
+        <button onclick="simulateSpace()">Simulate Space Key</button>
+        <button onclick="checkState()">Check Current State</button>
+        <button onclick="resetAll()">Reset Everything</button>
+        <div id="status">Status: Ready</div>
+    </div>
+    
+    <div id="nextView">
+        <div id="episodeContainer"></div>
+    </div>
+
+    <script src="/episode.js"></script>
+    <script>
+        let episode = null;
+        
+        const updateStatus = (msg, type = '') => {
+            const status = document.getElementById('status');
+            const className = type ? ` class="${type}"` : '';
+            status.innerHTML = `<span${className}>${msg}</span>`;
+            console.log(msg);
+        };
+        
+        const startDay3 = () => {
+            updateStatus('Starting Day 3...', 'info');
+            
+            // Clear everything
+            if (episode) {
+                episode.cleanup();
+            }
+            localStorage.clear();
+            
+            // Set up player
+            localStorage.setItem('player.avatar.path', '/public/assets/bombshells/elle.png');
+            localStorage.setItem('player.avatar.name', 'Elle');
+            localStorage.setItem('player.avatar.defaultPath', '/public/assets/bombshells/elle.png');
+            
+            // Create fresh episode instance
+            episode = new EpisodeDialog();
+            
+            // Load Day 3
+            episode.loadDay3BedroomScene();
+            
+            // Setup controls
+            episode.setupKeyboardControls();
+            
+            updateStatus('Day 3 loaded. Steps: ' + episode.steps.length + ', Current: ' + episode.currentIndex, 'success');
+            
+            // Show first step info
+            if (episode.steps[0]) {
+                console.log('First step:', episode.steps[0]);
+            }
+        };
+        
+        const simulateSpace = () => {
+            if (!episode) {
+                updateStatus('No episode loaded. Click "Start Day 3" first.', 'error');
+                return;
+            }
+            
+            updateStatus('Simulating Space key...', 'info');
+            
+            // Get current step before advancing
+            const currentStep = episode.steps[episode.currentIndex];
+            console.log('Current step before advance:', currentStep);
+            
+            // Call advance directly
+            episode.advance();
+            
+            // Check new state
+            const newStep = episode.steps[episode.currentIndex];
+            updateStatus(`Advanced from index ${episode.currentIndex-1} to ${episode.currentIndex}. Current step type: ${newStep?.type || 'none'}`, 'success');
+            console.log('New step after advance:', newStep);
+            
+            // If we hit navigate step, it should show outfit UI
+            if (newStep && newStep.type === 'navigate') {
+                updateStatus('Navigate step reached! Outfit UI should appear.', 'success');
+            }
+        };
+        
+        const checkState = () => {
+            if (!episode) {
+                updateStatus('No episode loaded.', 'error');
+                return;
+            }
+            
+            const currentStep = episode.steps[episode.currentIndex];
+            const container = document.getElementById('episodeContainer');
+            
+            const state = {
+                day: episode.currentDay,
+                index: episode.currentIndex,
+                totalSteps: episode.steps.length,
+                currentStepType: currentStep?.type || 'none',
+                currentStepId: currentStep?.id || 'none',
+                containerHasContent: container.innerHTML.length > 0,
+                containerFirstChild: container.firstChild?.tagName || 'none'
+            };
+            
+            updateStatus('State: ' + JSON.stringify(state, null, 2), 'info');
+            console.table(state);
+        };
+        
+        const resetAll = () => {
+            if (episode) {
+                episode.cleanup();
+            }
+            localStorage.clear();
+            document.getElementById('episodeContainer').innerHTML = '';
+            episode = null;
+            updateStatus('Everything reset.', 'success');
+        };
+        
+        // Also listen for real keyboard
+        document.addEventListener('keydown', (e) => {
+            if (e.key === ' ' || e.key === 'Enter') {
+                const status = document.getElementById('status');
+                status.innerHTML += ' [Real ' + e.key + ' pressed]';
+            }
+        });
+    </script>
+</body>
+</html>

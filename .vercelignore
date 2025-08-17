@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# TypeScript source files (we're deploying static)
+src/
+*.ts
+*.tsx
+tsconfig.json
+
+# Test files
+test*.html
+verify*.html
+debug*.html
+simple-test.html
+
+# Development files
+*.md
+run.py
+package-typescript.json
+
+# Git
+.git/
+.gitignore
+
+# Editor
+.vscode/
+.idea/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+npm-debug.log*

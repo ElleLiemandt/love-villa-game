@@ -8,7 +8,9 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "serve": "python3 run.py"
+    "serve": "python3 run.py",
+    "deploy": "vercel --prod",
+    "deploy:preview": "vercel"
   },
   "dependencies": {
     "react": "^18.2.0",
@@ -26,3 +28,4 @@
   "author": "",
   "license": "MIT"
 }
+

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 3 Test</title>
+</head>
+<body>
+    <button onclick="testDay3()">Test Day 3 Flow</button>
+    <div id="output"></div>
+    
+    <script>
+        function testDay3() {
+            // Clear localStorage and set up Day 3
+            localStorage.setItem('story.progress.day', '3');
+            localStorage.setItem('player.avatar.path', '/public/avatars/elle.png');
+            localStorage.setItem('player.avatar.name', 'Elle');
+            localStorage.setItem('player.avatar.defaultPath', '/public/avatars/elle.png');
+            
+            // Navigate to game
+            window.location.href = 'http://localhost:8001/';
+        }
+        
+        // Show current localStorage state
+        document.getElementById('output').innerHTML = `
+            <h3>Current State:</h3>
+            <p>Day: ${localStorage.getItem('story.progress.day') || 'Not set'}</p>
+            <p>Avatar: ${localStorage.getItem('player.avatar.name') || 'Not set'}</p>
+        `;
+    </script>
+</body>
+</html>

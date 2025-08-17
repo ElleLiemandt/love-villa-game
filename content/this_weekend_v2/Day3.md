@@ -21,3 +21,4 @@ Ariana: Time for another challenge! What's 12 × 4? Quick!
 Narration: The night air is filled with possibility...
 
 Narration: End of Day 3. Tomorrow will determine your fate in the villa.
+

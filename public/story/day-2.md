@@ -22,4 +22,3 @@ Ariana: Quick! What's 9 × 8? Seven seconds, go!
 Narration: As the day winds down, you reflect on the connections you're building...
 
 Narration: End of Day 2. The drama is heating up!
-

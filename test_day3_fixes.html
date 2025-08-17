@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Day 3 Fixes Test</title>
+    <style>
+        body {
+            background: #1a1a1a;
+            color: white;
+            font-family: Arial;
+            padding: 20px;
+        }
+        .test-section {
+            background: #2a2a2a;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        h2 { color: #667eea; }
+        .fixed { color: #4caf50; font-weight: bold; }
+        .instruction { color: #ffa726; }
+        code {
+            background: #333;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Day 3 Fixes - Complete Test Guide</h1>
+    
+    <div class="test-section">
+        <h2>✅ ISSUE 1: Pressing '3' Key</h2>
+        <p class="fixed">FIXED: Now goes directly to outfit UI</p>
+        
+        <p><strong>What was wrong:</strong></p>
+        <ul>
+            <li>Showed Ariana saying "great outfit choice"</li>
+            <li>Skipped the outfit selection</li>
+        </ul>
+        
+        <p><strong>What happens now:</strong></p>
+        <ol>
+            <li>Press <code>3</code> key</li>
+            <li>Immediately see: <span class="instruction">"Day 3 Begins"</span></li>
+            <li>Subtitle: <span class="instruction">"Choose Your Outfit for the Day"</span></li>
+            <li>3 outfit choices appear (no dialogue before)</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>✅ ISSUE 2: Day 3 Skipped in Normal Flow</h2>
+        <p class="fixed">FIXED: Day 2 now properly transitions to Day 3</p>
+        
+        <p><strong>What was wrong:</strong></p>
+        <ul>
+            <li>After Day 2 Villa Night scene, game skipped to Day 4</li>
+            <li>Missing day_transition step</li>
+        </ul>
+        
+        <p><strong>What happens now:</strong></p>
+        <ol>
+            <li>Day 2 Villa Night ends with Nic romance</li>
+            <li>Shows: <span class="instruction">"Romance with Nic +2"</span> toast</li>
+            <li>Day transition animation plays</li>
+            <li>Day 3 loads → Outfit UI appears immediately</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>🎮 How to Test</h2>
+        
+        <h3>Test 1: Direct Jump (Press '3')</h3>
+        <ol>
+            <li>Go to: <a href="http://localhost:8001/" target="_blank">http://localhost:8001/</a></li>
+            <li>Press <code>3</code> key</li>
+            <li>✅ Should see outfit UI immediately with "Day 3 Begins" title</li>
+            <li>✅ NO Ariana dialogue should appear first</li>
+        </ol>
+        
+        <h3>Test 2: Natural Progression</h3>
+        <ol>
+            <li>Start from Day 1</li>
+            <li>Complete Day 1 → Day 2 transition works</li>
+            <li>Press <code>V</code> to jump to Day 2 Villa Night</li>
+            <li>Complete the 10 Nic romance lines</li>
+            <li>✅ Should transition to Day 3 (not skip to Day 4)</li>
+            <li>✅ Outfit UI appears as first thing in Day 3</li>
+        </ol>
+    </div>
+    
+    <div class="test-section">
+        <h2>📝 Summary of Changes</h2>
+        <ul>
+            <li>✅ Day 3 starts directly with outfit UI (no wake-up dialogue first)</li>
+            <li>✅ Outfit UI shows "Day 3 Begins" + "Choose Your Outfit for the Day"</li>
+            <li>✅ '3' key clears Day 3 flags for fresh start</li>
+            <li>✅ Day 2 Villa Night properly transitions to Day 3</li>
+            <li>✅ After outfit selection: "Perfect! Time to see what drama today brings."</li>
+        </ul>
+    </div>
+    
+    <script>
+        console.log('=== DAY 3 FIXES APPLIED ===');
+        console.log('1. Press "3" → Goes directly to outfit UI');
+        console.log('2. Day 2 → Day 3 transition fixed');
+        console.log('3. No more Ariana "great outfit" flash');
+        console.log('Test at: http://localhost:8001/');
+    </script>
+</body>
+</html>

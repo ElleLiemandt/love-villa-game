@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Day 3 Flow</title>
+    <style>
+        body { font-family: monospace; padding: 20px; }
+        button { padding: 10px; margin: 5px; }
+        #log { background: #f0f0f0; padding: 10px; margin-top: 20px; height: 400px; overflow-y: auto; }
+        .log-entry { margin: 2px 0; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Day 3 Flow Tester</h1>
+    <button onclick="testDay3()">Test Full Day 3 Flow</button>
+    <button onclick="clearLog()">Clear Log</button>
+    <div id="log"></div>
+    
+    <script>
+        const log = (msg, type = '') => {
+            const logDiv = document.getElementById('log');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry ' + type;
+            entry.textContent = new Date().toISOString().substr(11, 8) + ' - ' + msg;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+            console.log(msg);
+        };
+        
+        const clearLog = () => {
+            document.getElementById('log').innerHTML = '';
+        };
+        
+        const testDay3 = async () => {
+            log('Starting Day 3 test...');
+            
+            // Set up localStorage for Day 3
+            localStorage.setItem('story.progress.day', '3');
+            localStorage.setItem('player.avatar.path', '/public/avatars/elle.png');
+            localStorage.setItem('player.avatar.name', 'Elle');
+            localStorage.setItem('player.avatar.defaultPath', '/public/avatars/elle.png');
+            localStorage.setItem('meters.love', '10');
+            localStorage.setItem('meters.drama', '5');
+            
+            log('localStorage configured for Day 3');
+            
+            // Create a test episode instance
+            const testEpisode = new window.EpisodeDialog();
+            log('Episode instance created');
+            
+            // Initialize
+            await testEpisode.init();
+            log('Episode initialized');
+            
+            // Check current state
+            log('Current day: ' + testEpisode.currentDay);
+            log('Current index: ' + testEpisode.currentIndex);
+            log('Steps loaded: ' + testEpisode.steps.length);
+            
+            if (testEpisode.steps.length > 0) {
+                log('First step: ' + JSON.stringify(testEpisode.steps[0]));
+                log('AskStep found at index: ' + testEpisode.steps.findIndex(s => s.type === 'ask'));
+                
+                const askStep = testEpisode.steps.find(s => s.type === 'ask');
+                if (askStep) {
+                    log('AskStep details: ' + JSON.stringify({
+                        id: askStep.id,
+                        isDay3BedroomChoice: askStep.isDay3BedroomChoice,
+                        optionCount: askStep.options?.length
+                    }));
+                }
+            }
+            
+            log('Test complete!', 'success');
+        };
+        
+        // Load episode.js
+        const script = document.createElement('script');
+        script.src = '/episode.js';
+        script.onload = () => log('episode.js loaded', 'success');
+        script.onerror = () => log('Failed to load episode.js', 'error');
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

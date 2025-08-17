@@ -72,11 +72,11 @@ class LoveIslandGame {
     }
     
     initializeStateMachine() {
-        // Skip landing, go straight to PLAY state for Day 1
-        this.gameState.screenState = 'PLAY';
+        // Show landing screen first
+        this.gameState.screenState = 'LANDING';
         console.log('Initializing state machine, screenState:', this.gameState.screenState);
-        console.log('Skipping landing screen - going straight to Day 1');
-        this.renderCurrentScreen();
+        console.log('Showing landing screen');
+        // Don't render here - let landing.js handle it
         
         // Load and preload assets
         this.preloadAssets();

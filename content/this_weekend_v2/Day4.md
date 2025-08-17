@@ -21,3 +21,4 @@ Narration: The villa erupts in cheers and drama as your Love Island journey come
 Ariana: And that's a wrap on another explosive season of Love Island!
 
 Narration: Your choices have led you here. Was it love, drama, or something in between?
+
