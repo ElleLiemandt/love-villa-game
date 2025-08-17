@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deployment Test</title>
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-family: Arial, sans-serif;
+            padding: 40px;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-item {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .status {
+            font-weight: bold;
+        }
+        .pass { color: #4caf50; }
+        .fail { color: #f44336; }
+        .loading { color: #ffc107; }
+        img {
+            max-width: 100px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>🧪 Deployment Test</h1>
+        
+        <div class="test-item">
+            <span>HTML Loading</span>
+            <span class="status pass">✅ PASS</span>
+        </div>
+        
+        <div class="test-item">
+            <span>CSS Styles</span>
+            <span class="status pass">✅ PASS</span>
+        </div>
+        
+        <div class="test-item">
+            <span>JavaScript Files</span>
+            <span id="js-status" class="status loading">⏳ Testing...</span>
+        </div>
+        
+        <div class="test-item">
+            <span>Villa Background</span>
+            <span id="villa-status" class="status loading">⏳ Testing...</span>
+        </div>
+        
+        <div class="test-item">
+            <span>Sample Avatar</span>
+            <span id="avatar-status" class="status loading">⏳ Testing...</span>
+        </div>
+        
+        <div class="test-item">
+            <span>Sample Bombshell</span>
+            <span id="bombshell-status" class="status loading">⏳ Testing...</span>
+        </div>
+        
+        <h2 style="margin-top: 30px;">Test Images:</h2>
+        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <img id="villa-img" src="public/assets/backgrounds/villa_day.png" alt="Villa">
+            <img id="avatar-img" src="public/assets/avatars/ariana.png" alt="Avatar">
+            <img id="bombshell-img" src="public/assets/bombshells/elle.png" alt="Bombshell">
+        </div>
+        
+        <div style="margin-top: 30px; padding: 20px; background: rgba(0,0,0,0.3); border-radius: 10px;">
+            <h3>Results:</h3>
+            <p id="results">Testing assets...</p>
+        </div>
+    </div>
+    
+    <script>
+        // Test JavaScript loading
+        document.getElementById('js-status').innerHTML = '✅ PASS';
+        document.getElementById('js-status').className = 'status pass';
+        
+        // Test images
+        let testsComplete = 0;
+        let testsPassed = 0;
+        const totalTests = 3;
+        
+        function checkComplete() {
+            testsComplete++;
+            if (testsComplete === totalTests) {
+                const results = document.getElementById('results');
+                if (testsPassed === totalTests) {
+                    results.innerHTML = `✅ ALL TESTS PASSED! (${testsPassed}/${totalTests})<br>Your deployment is working correctly!`;
+                    results.style.color = '#4caf50';
+                } else {
+                    results.innerHTML = `⚠️ Some tests failed (${testsPassed}/${totalTests})<br>Check your asset paths and file structure.`;
+                    results.style.color = '#ff9800';
+                }
+            }
+        }
+        
+        // Test villa background
+        const villaImg = document.getElementById('villa-img');
+        villaImg.onload = () => {
+            document.getElementById('villa-status').innerHTML = '✅ PASS';
+            document.getElementById('villa-status').className = 'status pass';
+            testsPassed++;
+            checkComplete();
+        };
+        villaImg.onerror = () => {
+            document.getElementById('villa-status').innerHTML = '❌ FAIL';
+            document.getElementById('villa-status').className = 'status fail';
+            checkComplete();
+        };
+        
+        // Test avatar
+        const avatarImg = document.getElementById('avatar-img');
+        avatarImg.onload = () => {
+            document.getElementById('avatar-status').innerHTML = '✅ PASS';
+            document.getElementById('avatar-status').className = 'status pass';
+            testsPassed++;
+            checkComplete();
+        };
+        avatarImg.onerror = () => {
+            document.getElementById('avatar-status').innerHTML = '❌ FAIL';
+            document.getElementById('avatar-status').className = 'status fail';
+            checkComplete();
+        };
+        
+        // Test bombshell
+        const bombshellImg = document.getElementById('bombshell-img');
+        bombshellImg.onload = () => {
+            document.getElementById('bombshell-status').innerHTML = '✅ PASS';
+            document.getElementById('bombshell-status').className = 'status pass';
+            testsPassed++;
+            checkComplete();
+        };
+        bombshellImg.onerror = () => {
+            document.getElementById('bombshell-status').innerHTML = '❌ FAIL';
+            document.getElementById('bombshell-status').className = 'status fail';
+            checkComplete();
+        };
+    </script>
+</body>
+</html>
